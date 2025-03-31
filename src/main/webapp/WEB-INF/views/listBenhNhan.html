@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý Xe và Lịch Trình</title>
+    <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            border-top: none;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .badge {
+            font-weight: normal;
+        }
+
+        .search-form {
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-4">
+    <!-- Thông báo -->
+    <div th:if="${notFoundMessage}" class="alert alert-warning alert-dismissible fade show mb-4">
+        <span th:text="${notFoundMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Bảng Danh Sách Xe -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="mb-0">Danh Sách Bệnh Nhân</h3>
+        </div>
+        <form th:action="@{/benhnhan/search}" method="get" class="search-form">
+                            <div class="input-group">
+                                <input type="text" name="soCMND" class="form-control"
+                                       placeholder="Tìm bệnh nhân theo số CMND..." th:value="${searchKeyword}">
+                                <button type="submit" class="btn btn-outline-secondary">Tìm</button>
+                            </div>
+                        </form>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th width="5%">STT</th>
+                        <th width="15%">Mã Bệnh Nhân</th>
+                        <th width="15%">Tên Bệnh Nhân</th>
+                        <th width="15%">Số CMND</th>
+                        <th width="20%">Giới Tính</th>
+                        <th width="15%">Ngày Sinh</th>
+                        <th width="15%">Địa Chỉ</th>
+                        <th width="15%">Số Điện Thoại</th>
+                        <th width="20%">Tên Tỉnh Thành</th>
+                        <th width="20%">Ngày Cách Ly</th>
+                        <th width="20%">Tên Đơn Vị</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="benhNhan, iterStat : ${listBenhNhan}">
+                        <td th:text="${iterStat.index + 1}"></td>
+                        <td>
+                            <a th:href="@{/benhnhan/edit/{maBenhNhan}(maBenhNhan=${benhNhan.maBenNhan})}"
+                               class="text-decoration-none">
+                                <span th:text="${benhNhan.maBenNhan}"></span>
+                            </a>
+                        </td>
+                        <td th:text="${benhNhan.tenBenhNhan}"></td>
+                        <td th:text="${benhNhan.soCMND}"></td>
+                        <td th:text="${benhNhan.gioiTinh}"></td>
+                        <td th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${benhNhan.diaChi}"></td>
+                        <td th:text="${benhNhan.soDienThoai}"></td>
+                        <td th:text="${benhNhan.tinhThanh.tenTinhThanh}"></td>
+                        <td th:text="${#temporals.format(benhNhan.ngayCachLy, 'dd/MM/yyyy')}"></td>
+                        <td th:text="${benhNhan.donViDieuTri.tenDonVi}"></td>
+                    </tr>
+                    <tr th:if="${listXe != null and listXe.isEmpty()}">
+                        <td colspan="7" class="text-center text-muted py-3">
+                            Không có dữ liệu xe
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!--    &lt;!&ndash; Bảng Danh Sách Lịch Trình &ndash;&gt;-->
+    <!--    <div class="card">-->
+    <!--        <div class="card-header d-flex justify-content-between align-items-center">-->
+    <!--            <h3 class="mb-0">Lịch Trình Xe</h3>-->
+    <!--            <form th:action="@{/lichtrinhxe/search}" method="get" class="search-form">-->
+    <!--                <div class="input-group">-->
+    <!--                    <input type="text" name="tenNhaXe" class="form-control"-->
+    <!--                           placeholder="Tìm nhà xe..." th:value="${searchKeyword}">-->
+    <!--                    <button type="submit" class="btn btn-outline-secondary">Tìm</button>-->
+    <!--                </div>-->
+    <!--            </form>-->
+    <!--        </div>-->
+    <!--        <div class="card-body p-0">-->
+    <!--            <div class="table-responsive">-->
+    <!--                <table class="table table-hover mb-0">-->
+    <!--                    <thead>-->
+    <!--                    <tr>-->
+    <!--                        <th width="5%">STT</th>-->
+    <!--                        <th width="10%">Mã Xe</th>-->
+    <!--                        <th width="15%">Thông tin Xe</th>-->
+    <!--                        <th width="15%">Tuyến</th>-->
+    <!--                        <th width="15%">Ngày/Giờ</th>-->
+    <!--                        <th width="15%">Tài xế</th>-->
+    <!--                        <th width="10%">Số HK</th>-->
+    <!--                        <th width="15%">Nhà Xe</th>-->
+    <!--                    </tr>-->
+    <!--                    </thead>-->
+    <!--                    <tbody>-->
+    <!--                    <tr th:each="lichTrinh, iterStat : ${listLichTrinhXe}">-->
+    <!--                        <td th:text="${iterStat.index + 1}"></td>-->
+    <!--                        <td>-->
+    <!--                            <a th:href="@{/lichtrinhxe/add/{maXe}(maXe=${lichTrinh.xe.maXe})}"-->
+    <!--                               class="text-decoration-none">-->
+    <!--                                <span th:text="${lichTrinh.xe.maXe}"></span>-->
+    <!--                            </a>-->
+    <!--                        </td>-->
+    <!--                        <td>-->
+    <!--                            <div th:text="${lichTrinh.xe.bienSo}"></div>-->
+    <!--                            <small class="text-muted" th:text="${lichTrinh.xe.hangSanXuat}"></small>-->
+    <!--                        </td>-->
+    <!--                        <td th:text="${lichTrinh.tuyenXe.tenTuyen}"></td>-->
+    <!--                        <td>-->
+    <!--                            <div th:text="${#temporals.format(lichTrinh.ngayXuatBen, 'dd/MM/yyyy')}"></div>-->
+    <!--                            <small class="text-muted" th:text="${#temporals.format(lichTrinh.gioXuatBen, 'HH:mm')}"></small>-->
+    <!--                        </td>-->
+    <!--                        <td th:text="${lichTrinh.tenTaiXe}"></td>-->
+    <!--                        <td>-->
+    <!--                            <span class="badge bg-light text-dark" th:text="${lichTrinh.soLuongHanhKhach}"></span>-->
+    <!--                        </td>-->
+    <!--                        <td th:text="${lichTrinh.xe.nhaXe.tenNhaXe}"></td>-->
+    <!--                    </tr>-->
+    <!--                    <tr th:if="${listLichTrinhXe != null and listLichTrinhXe.isEmpty()}">-->
+    <!--                        <td colspan="8" class="text-center text-muted py-3">-->
+    <!--                            Không có lịch trình nào-->
+    <!--                        </td>-->
+    <!--                    </tr>-->
+    <!--                    </tbody>-->
+    <!--                </table>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <!--    </div>-->
+</div>
+
+<script th:src="@{resources/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

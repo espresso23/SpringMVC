@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Benh Nhan</title>
+    <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+<h1>Thêm Bệnh Nhân mới</h1>
+<div class="container mt-4">
+    <div th:if="${successMessage}" class="alert alert-success"
+         style="color: green; padding: 10px; margin: 10px 0; border: 1px solid green;">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <!-- Hiển thị thông báo lỗi -->
+    <div id="errorMessage" th:if="${errorMessage}" class="alert alert-danger"
+         style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red;">
+        <span th:text="${errorMessage}"></span>
+    </div>
+    <form id="addBenhNhanForm" th:action="@{/benhnhan/addBenhNhan}" method="post" th:object="${benhNhan}" novalidate>
+        <div class="form-group mb-3">
+            <label for="maBenNhan">Mã Bệnh Nhân</label>
+            <input type="text" class="form-control" id="maBenNhan" th:field="*{maBenNhan}" data-required="true">
+            <div class="error-message" id="maBenNhan-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="tenBenhNhan">Tên Bệnh Nhân</label>
+            <input type="text" class="form-control" id="tenBenhNhan" th:field="*{tenBenhNhan}" data-required="true">
+            <div class="error-message" id="tenBenhNhan-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="soCMND">Số CMND</label>
+            <input type="text" class="form-control" id="soCMND" th:field="*{soCMND}" data-required="true">
+            <div class="error-message" id="soCMND-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="gioiTinh">Giới Tính</label>
+            <input type="text" class="form-control" id="gioiTinh" th:field="*{gioiTinh}" data-required="true">
+            <div class="error-message" id="gioiTinh-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="ngaySinh">Ngày Sinh</label>
+            <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" data-required="true">
+            <div class="error-message" id="ngaySinh-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="diaChi">Địa Chỉ</label>
+            <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}" data-required="true">
+            <div class="error-message" id="diaChi-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="soDienThoai">Số Điện Thoại</label>
+            <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" data-required="true">
+            <div class="error-message" id="soDienThoai-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="maTinhThanh">Mã Tỉnh Thành</label>
+            <input type="text" class="form-control" id="maTinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
+            <div class="error-message" id="maTinhThanh-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="ngayCachLy">Ngày Cách Ly</label>
+            <input type="date" class="form-control" id="ngayCachLy" th:field="*{ngayCachLy}" data-required="true">
+            <div class="error-message" id="ngayCachLy-error"></div>
+        </div>
+        <div class="form-group mb-3">
+            <label for="maDonVi">Mã Đơn Vị</label>
+            <input type="text" class="form-control" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" data-required="true">
+            <div class="error-message" id="maDonVi-error"></div>
+        </div>
+        <button type="submit" class="btn btn-primary">Thêm Bệnh Nhân</button>
+    </form>
+</div>
+
+<script th:src="@{resources/js/bootstrap.bundle.min.js}"></script>
+<script>
+    window.onload = function () {
+        console.log("✅ Script chạy!");
+
+        document.getElementById('addBenhNhanForm').addEventListener('submit', function (event) {
+            // Luôn ngăn hành vi mặc định trước
+            event.preventDefault();
+            console.log("📌 Form submit triggered!");
+
+            let isValid = true;
+            let hasEmptyFields = false;
+
+            // Xóa tất cả thông báo lỗi trước khi kiểm tra
+            document.querySelectorAll('.error-message').forEach(e => {
+                e.textContent = '';
+            });
+
+            // Xóa tất cả class is-invalid
+            document.querySelectorAll('.is-invalid').forEach(e => {
+                e.classList.remove('is-invalid');
+            });
+
+            // Lấy tất cả các input có thuộc tính data-required="true"
+            const requiredInputs = document.querySelectorAll('input[data-required="true"]');
+
+            requiredInputs.forEach(input => {
+                const value = input.value.trim();
+                const fieldName = input.id;
+                const labelText = input.previousElementSibling.textContent; // Lấy nội dung từ nhãn
+                const errorElement = document.getElementById(fieldName + '-error');
+
+                if (!value) {
+                    console.log(`❌ Field "${fieldName}" is empty.`);
+                    hasEmptyFields = true;
+
+                    // Hiển thị thông báo lỗi
+                    errorElement.textContent = `${labelText} không được để trống`;
+                    input.classList.add('is-invalid');
+
+                    isValid = false;
+                }
+            });
+
+            // Hiển thị cảnh báo chung nếu có trường trống
+            if (hasEmptyFields) {
+                // Tạo thông báo alert nếu chưa có
+                if (!document.getElementById('general-error-alert')) {
+                    const alertDiv = document.createElement('div');
+                    alertDiv.id = 'general-error-alert';
+                    alertDiv.className = 'alert alert-danger mt-3';
+                    alertDiv.role = 'alert';
+                    alertDiv.textContent = 'Vui lòng điền đầy đủ thông tin bệnh nhân trước khi gửi!';
+
+                    const formElement = document.getElementById('addBenhNhanForm');
+                    formElement.parentNode.insertBefore(alertDiv, formElement);
+                }
+            } else {
+                // Xóa thông báo alert nếu không còn trường trống
+                const existingAlert = document.getElementById('general-error-alert');
+                if (existingAlert) {
+                    existingAlert.remove();
+                }
+            }
+
+            // Kiểm tra ngày sinh
+            const ngaySinh = document.getElementById('ngaySinh').value;
+            const ngaySinhInput = document.getElementById('ngaySinh');
+            const ngaySinhError = document.getElementById('ngaySinh-error');
+
+            if (ngaySinh && new Date(ngaySinh) > new Date()) {
+                console.log("❌ Lỗi ngày sinh!");
+                ngaySinhError.textContent = 'Ngày sinh phải nhỏ hơn ngày hiện tại';
+                ngaySinhInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            // Submit form chỉ khi không có lỗi
+            if (isValid) {
+                console.log("✅ Không có lỗi, form sẽ submit!");
+                this.submit(); // 'this' ở đây tham chiếu đến form element
+            } else {
+                console.log("🚫 Có lỗi, ngăn submit!");
+                // Cuộn trang lên vị trí lỗi đầu tiên
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    };
+</script>
+</body>
+</html>
