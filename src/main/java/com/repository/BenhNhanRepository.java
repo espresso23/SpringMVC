@@ -15,4 +15,5 @@ public interface BenhNhanRepository extends JpaRepository<BenhNhan, String> {
 
     @Query("SELECT b from BenhNhan b where b.soCMND = :soCMND")
     BenhNhan getBenhNhansBySoCMND1(@Param("soCMND") String soCMND);
+
 }

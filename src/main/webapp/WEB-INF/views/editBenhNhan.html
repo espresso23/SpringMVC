@@ -2,11 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Add Benh Nhan</title>
+    <title>Edit Benh Nhan</title>
 </head>
 <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
 <body>
-<h1>Thêm Xe Mới</h1>
+<h1>Edit Bệnh Nhân</h1>
 <div class="container mt-4">
     <div th:if="${successMessage}" class="alert alert-success"
          style="color: green; padding: 10px; margin: 10px 0; border: 1px solid green;">
@@ -18,8 +18,8 @@
          style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red;">
         <span th:text="${errorMessage}"></span>
     </div>
-    <form th:action="@{/benhnhan/update/{maBenhNhan}(maBenhNhan=${benhNhan.maBenNhan})}" method="post" th:object="${benhNhan}">
-        <input type="hidden" class="form-control" name="maBenhNhan" id="maBenNhan" th:field="*{maBenNhan}" required>
+    <form th:action="@{/benhnhan/update/{maBenhNhan}(maBenhNhan=${benhNhan.maBenNhan})}" th:object="${benhNhan}" method="post">
+        <input type="hidden" th:field="*{maBenNhan}">
         <div class="form-group mb-3">
             <label for="ngayCachLy">Ngày Cách Ly</label>
             <input type="date" class="form-control" id="ngayCachLy" th:field="*{ngayCachLy}" required>

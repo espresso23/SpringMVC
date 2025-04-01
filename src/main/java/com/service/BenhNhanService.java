@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Service class for managing BenhNhan (patients).
@@ -89,13 +90,13 @@ public class BenhNhanService {
     /**
      * Retrieves a patient by their ID.
      *
-     * @param id The patient ID.
+     * @param maBenhNhan The patient ID.
      * @return The found patient.
      * @throws RuntimeException If no patient is found with the given ID.
      */
-    public BenhNhan getBenhNhanById(String id) {
-        return benhNhanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân với ID: " + id));
+    public BenhNhan getBenhNhanById(String maBenhNhan) {
+        Optional<BenhNhan> optionalBenhNhan = benhNhanRepository.findById(maBenhNhan);
+        return optionalBenhNhan.orElse(null);
     }
 
     /**

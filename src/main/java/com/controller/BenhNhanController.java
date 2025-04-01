@@ -1,7 +1,7 @@
 package com.controller;
 
 // Import required classes and annotations
-import com.model.BenhNhan;
+import com.model.*;
 import com.service.BenhNhanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +23,7 @@ public class BenhNhanController {
     }
 
     // Display the form to add a new BenhNhan
-    @GetMapping
+    @GetMapping("")
     public String showPageBenhNhan(Model model) {
         model.addAttribute("benhNhan", new BenhNhan()); // Add an empty BenhNhan object to the model
         return "addBenhNhan"; // Return the view for adding BenhNhan
@@ -73,27 +73,35 @@ public class BenhNhanController {
         return "redirect:/benhnhan/listsearch"; // Redirect to the search results page
     }
 
-    // Show the form to edit a specific BenhNhan
+    //show form edit benh nhan
     @GetMapping("/edit/{maBenhNhan}")
-    public String showFormEdit(@PathVariable("maBenhNhan") String maBenhNhan, Model model) {
-        BenhNhan benhNhan = benhNhanService.getBenhNhanById(maBenhNhan); // Fetch BenhNhan by ID
+    public String showFormEdit(@PathVariable("maBenhNhan") String maBenhNhan, Model model, RedirectAttributes redirectAttributes) {
+        BenhNhan benhNhan = benhNhanService.getBenhNhanById(maBenhNhan);
+
+        // In ra console để kiểm tra dữ liệu
+        System.out.println("Bệnh nhân được tìm thấy: " + benhNhan);
+
         if (benhNhan == null) {
-            return "redirect:/benhnhan?notFoundMessage=Bệnh nhân không tồn tại"; // Handle not found case
+            redirectAttributes.addFlashAttribute("errorMessage", "Bệnh nhân không tồn tại.");
+            return "redirect:/benhnhan/list";
         }
-        model.addAttribute("benhNhan", benhNhan); // Add BenhNhan to the model
-        return "editBenhNhan"; // Return the view for editing BenhNhan
+
+        model.addAttribute("benhNhan", benhNhan);
+        return "editBenhNhan";
     }
 
     // Handle form submission for updating a BenhNhan
     @PostMapping("/update/{maBenhNhan}")
-    public String editBenhNhan(@PathVariable("maBenhNhan") String maBenhNhan, @ModelAttribute("benhNhan") BenhNhan benhNhan, RedirectAttributes redirectAttributes) {
+    public String editBenhNhan(@PathVariable("maBenhNhan") String maBenhNhan,
+                               @ModelAttribute("benhNhan") BenhNhan benhNhan,
+                               RedirectAttributes redirectAttributes) {
         try {
-            benhNhanService.updateBenhNhan(maBenhNhan, benhNhan); // Update BenhNhan in the database
-            redirectAttributes.addFlashAttribute("successMessage", "Updated successfully"); // Add success message
-            return "redirect:/benhnhan/list"; // Redirect to the list page
+            benhNhanService.updateBenhNhan(maBenhNhan, benhNhan);
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật thành công!");
+            return "redirect:/benhnhan/list";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage()); // Handle errors
-            return "redirect:/benhnhan/edit/" + maBenhNhan; // Redirect back to the edit page
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật: " + e.getMessage());
+            return "redirect:/benhnhan/edit/" + maBenhNhan;
         }
     }
 }
