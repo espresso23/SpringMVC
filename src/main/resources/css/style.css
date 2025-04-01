@@ -1,99 +1,26 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 20px;
+.search-container {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
 }
 
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+.search-container input {
+    padding: 8px;
+    width: 200px;
 }
 
-h1 {
-    color: #333;
-    text-align: center;
+.search-container select {
+    padding: 8px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #4CAF50;
-    color: white;
-}
-
-tr:hover {
-    background-color: #f5f5f5;
-}
-
-.btn {
+.search-container button {
     padding: 8px 16px;
-    text-decoration: none;
-    border-radius: 4px;
-    display: inline-block;
-    margin-right: 5px;
-}
-
-.btn-add {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.btn-edit {
-    background-color: #2196F3;
-    color: white;
-}
-
-.btn-delete {
-    background-color: #f44336;
-    color: white;
-}
-
-.btn-save {
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
 }
 
-.btn-cancel {
-    background-color: #ccc;
-    color: #333;
-}
-
-.btn-view {
-    background-color: #FF9800;
-    color: white;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #555;
-}
-
-input[type="text"], input[type="email"], select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
+.search-container button:hover {
+    background-color: #45a049;
 }

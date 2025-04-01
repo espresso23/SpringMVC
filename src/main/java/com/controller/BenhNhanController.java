@@ -60,7 +60,7 @@ public class BenhNhanController {
 
     // Search BenhNhan by "soCMND"
     @GetMapping("/search")
-    public String getLichTrinhXeList(@RequestParam("soCMND") String soCMND,
+    public String searchByCMND(@RequestParam("soCMND") String soCMND,
                                      RedirectAttributes redirectAttributes) {
         List<BenhNhan> benhNhanList = benhNhanService.getBenhNhansBySoCMND(soCMND.trim()); // Search for BenhNhan
 
