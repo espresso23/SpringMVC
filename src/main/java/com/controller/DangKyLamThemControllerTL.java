@@ -29,7 +29,7 @@ public class DangKyLamThemControllerTL {
                 model.addAttribute("dangKyLamThemList", dangKyLamThemList);
             }
             model.addAttribute("dangKyLamThem", new DangKyLamThem());
-            return "index";
+            return "addDangKyLamThem";
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
