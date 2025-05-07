@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Add Benh Nhan</title>
-    <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
     <style>
         .error-message {
             color: red;
@@ -14,80 +14,176 @@
         .is-invalid {
             border-color: #dc3545;
         }
+        
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+        
+        .card {
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
     </style>
 </head>
 <body>
-<h1>Thêm Bệnh Nhân mới</h1>
-<div class="container mt-4">
-    <div th:if="${successMessage}" class="alert alert-success"
-         style="color: green; padding: 10px; margin: 10px 0; border: 1px solid green;">
-        <span th:text="${successMessage}"></span>
-    </div>
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Thêm Bệnh Nhân mới</h3>
+                <a th:href="@{/benhnhan/list}" class="btn btn-outline-secondary">
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
 
-    <!-- Hiển thị thông báo lỗi -->
-    <div id="errorMessage" th:if="${errorMessage}" class="alert alert-danger"
-         style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red;">
-        <span th:text="${errorMessage}"></span>
+            <div id="errorMessage" th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <form id="addBenhNhanForm" th:action="@{/benhnhan/addBenhNhan}" method="post" th:object="${benhNhan}" novalidate>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="maBenNhan" class="form-label required-field">Mã Bệnh Nhân</label>
+                            <input type="text" class="form-control" id="maBenNhan" th:field="*{maBenhNhan}" data-required="true">
+                            <div class="error-message" id="maBenNhan-error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="tenBenhNhan" class="form-label required-field">Tên Bệnh Nhân</label>
+                            <input type="text" class="form-control" id="tenBenhNhan" th:field="*{tenBenhNhan}" data-required="true">
+                            <div class="error-message" id="tenBenhNhan-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="soCMND" class="form-label required-field">Số CMND</label>
+                            <input type="text" class="form-control" id="soCMND" th:field="*{soCMND}" data-required="true">
+                            <div class="error-message" id="soCMND-error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="gioiTinh" class="form-label required-field">Giới Tính</label>
+                            <select class="form-select" id="gioiTinh" th:field="*{gioiTinh}" data-required="true">
+                                <option value="">Chọn giới tính</option>
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                            </select>
+                            <div class="error-message" id="gioiTinh-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="ngaySinh" class="form-label required-field">Ngày Sinh</label>
+                            <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" data-required="true">
+                            <div class="error-message" id="ngaySinh-error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="soDienThoai" class="form-label required-field">Số Điện Thoại</label>
+                            <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" data-required="true">
+                            <div class="error-message" id="soDienThoai-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="diaChi" class="form-label required-field">Địa Chỉ</label>
+                    <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}" data-required="true">
+                    <div class="error-message" id="diaChi-error"></div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="maTinhThanh" class="form-label required-field">Tỉnh Thành</label>
+                            <div class="input-group">
+                                <select class="form-select" id="maTinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
+                                    <option value="">Chọn tỉnh thành</option>
+                                    <option th:each="tinh : ${tinhThanhList}"
+                                            th:value="${tinh.maTinhThanh}"
+                                            th:text="${tinh.tenTinhThanh}">
+                                    </option>
+                                </select>
+                                <a th:href="@{/tinh-thanh/them-moi}" class="btn btn-outline-secondary" title="Thêm tỉnh thành mới">
+                                    Thêm mới
+                                </a>
+                            </div>
+                            <div class="error-message" id="maTinhThanh-error"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-3">
+                            <label for="ngayCachLy" class="form-label required-field">Ngày Cách Ly</label>
+                            <input type="date" class="form-control" id="ngayCachLy" th:field="*{ngayCachLy}" data-required="true">
+                            <div class="error-message" id="ngayCachLy-error"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group mb-3">
+                    <label for="maDonVi" class="form-label required-field">Đơn Vị Điều Trị</label>
+                    <div class="input-group">
+                        <select class="form-select" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" data-required="true">
+                            <option value="">Chọn đơn vị điều trị</option>
+                            <option th:each="donVi : ${donViList}"
+                                    th:value="${donVi.maDonVi}"
+                                    th:text="${donVi.tenDonVi}">
+                            </option>
+                        </select>
+                        <a th:href="@{/don-vi-dieu-tri/them-moi}" class="btn btn-outline-secondary" title="Thêm đơn vị điều trị mới">
+                            Thêm mới
+                        </a>
+                    </div>
+                    <div class="error-message" id="maDonVi-error"></div>
+                </div>
+                
+                <div class="alert alert-info mt-3">
+                    <strong>Lưu ý:</strong> Để thêm đơn vị điều trị, bạn cần đảm bảo đã có tỉnh thành liên quan trong hệ thống.
+                </div>
+                
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Thêm Bệnh Nhân</button>
+                    <a th:href="@{/benhnhan/list}" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
     </div>
-    <form id="addBenhNhanForm" th:action="@{/benhnhan/addBenhNhan}" method="post" th:object="${benhNhan}" novalidate>
-        <div class="form-group mb-3">
-            <label for="maBenNhan">Mã Bệnh Nhân</label>
-            <input type="text" class="form-control" id="maBenNhan" th:field="*{maBenNhan}" data-required="true">
-            <div class="error-message" id="maBenNhan-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="tenBenhNhan">Tên Bệnh Nhân</label>
-            <input type="text" class="form-control" id="tenBenhNhan" th:field="*{tenBenhNhan}" data-required="true">
-            <div class="error-message" id="tenBenhNhan-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="soCMND">Số CMND</label>
-            <input type="text" class="form-control" id="soCMND" th:field="*{soCMND}" data-required="true">
-            <div class="error-message" id="soCMND-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="gioiTinh">Giới Tính</label>
-            <input type="text" class="form-control" id="gioiTinh" th:field="*{gioiTinh}" data-required="true">
-            <div class="error-message" id="gioiTinh-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="ngaySinh">Ngày Sinh</label>
-            <input type="date" class="form-control" id="ngaySinh" th:field="*{ngaySinh}" data-required="true">
-            <div class="error-message" id="ngaySinh-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="diaChi">Địa Chỉ</label>
-            <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}" data-required="true">
-            <div class="error-message" id="diaChi-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="soDienThoai">Số Điện Thoại</label>
-            <input type="text" class="form-control" id="soDienThoai" th:field="*{soDienThoai}" data-required="true">
-            <div class="error-message" id="soDienThoai-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="maTinhThanh">Mã Tỉnh Thành</label>
-            <input type="text" class="form-control" id="maTinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
-            <div class="error-message" id="maTinhThanh-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="ngayCachLy">Ngày Cách Ly</label>
-            <input type="date" class="form-control" id="ngayCachLy" th:field="*{ngayCachLy}" data-required="true">
-            <div class="error-message" id="ngayCachLy-error"></div>
-        </div>
-        <div class="form-group mb-3">
-            <label for="maDonVi">Mã Đơn Vị</label>
-            <input type="text" class="form-control" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" data-required="true">
-            <div class="error-message" id="maDonVi-error"></div>
-        </div>
-        <button type="submit" class="btn btn-primary">Thêm Bệnh Nhân</button>
-    </form>
 </div>
 
-<script th:src="@{resources/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
 <script>
     window.onload = function () {
         console.log("✅ Script chạy!");
+
+
+        
+        // Sự kiện khi thay đổi tỉnh thành
 
         document.getElementById('addBenhNhanForm').addEventListener('submit', function (event) {
             // Luôn ngăn hành vi mặc định trước
@@ -107,13 +203,14 @@
                 e.classList.remove('is-invalid');
             });
 
-            // Lấy tất cả các input có thuộc tính data-required="true"
-            const requiredInputs = document.querySelectorAll('input[data-required="true"]');
+            // Lấy tất cả các input và select có thuộc tính data-required="true"
+            const requiredInputs = document.querySelectorAll('input[data-required="true"], select[data-required="true"]');
 
             requiredInputs.forEach(input => {
                 const value = input.value.trim();
                 const fieldName = input.id;
-                const labelText = input.previousElementSibling.textContent; // Lấy nội dung từ nhãn
+                // Tìm label theo attribute for
+                const labelText = document.querySelector('label[for="' + fieldName + '"]')?.textContent || fieldName;
                 const errorElement = document.getElementById(fieldName + '-error');
 
                 if (!value) {
@@ -121,12 +218,39 @@
                     hasEmptyFields = true;
 
                     // Hiển thị thông báo lỗi
-                    errorElement.textContent = `${labelText} không được để trống`;
+                    errorElement.textContent = `${labelText.replace('*', '')} không được để trống`;
                     input.classList.add('is-invalid');
 
                     isValid = false;
                 }
             });
+
+            // Kiểm tra ngày sinh
+            const ngaySinh = document.getElementById('ngaySinh').value;
+            const ngaySinhInput = document.getElementById('ngaySinh');
+            const ngaySinhError = document.getElementById('ngaySinh-error');
+
+            if (ngaySinh && new Date(ngaySinh) > new Date()) {
+                console.log("❌ Lỗi ngày sinh!");
+                ngaySinhError.textContent = 'Ngày sinh phải nhỏ hơn ngày hiện tại';
+                ngaySinhInput.classList.add('is-invalid');
+                isValid = false;
+            }
+
+            // Kiểm tra mối quan hệ giữa tỉnh thành và đơn vị điều trị
+            const selectedTinhThanh = document.getElementById('maTinhThanh').value;
+            const selectedDonVi = document.getElementById('maDonVi').value;
+            const donViError = document.getElementById('maDonVi-error');
+            const donViSelect = document.getElementById('maDonVi');
+
+            if (selectedTinhThanh && selectedDonVi) {
+                // Kiểm tra nếu đơn vị điều trị không thuộc tỉnh thành được chọn
+                if (!Array.from(donViSelect.options).some(option => option.value === selectedDonVi)) {
+                    donViError.textContent = 'Đơn vị điều trị không thuộc tỉnh thành được chọn';
+                    donViSelect.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
 
             // Hiển thị cảnh báo chung nếu có trường trống
             if (hasEmptyFields) {
@@ -139,7 +263,7 @@
                     alertDiv.textContent = 'Vui lòng điền đầy đủ thông tin bệnh nhân trước khi gửi!';
 
                     const formElement = document.getElementById('addBenhNhanForm');
-                    formElement.parentNode.insertBefore(alertDiv, formElement);
+                    formElement.parentNode.insertBefore(alertDiv, formElement.nextSibling);
                 }
             } else {
                 // Xóa thông báo alert nếu không còn trường trống
@@ -147,18 +271,6 @@
                 if (existingAlert) {
                     existingAlert.remove();
                 }
-            }
-
-            // Kiểm tra ngày sinh
-            const ngaySinh = document.getElementById('ngaySinh').value;
-            const ngaySinhInput = document.getElementById('ngaySinh');
-            const ngaySinhError = document.getElementById('ngaySinh-error');
-
-            if (ngaySinh && new Date(ngaySinh) > new Date()) {
-                console.log("❌ Lỗi ngày sinh!");
-                ngaySinhError.textContent = 'Ngày sinh phải nhỏ hơn ngày hiện tại';
-                ngaySinhInput.classList.add('is-invalid');
-                isValid = false;
             }
 
             // Submit form chỉ khi không có lỗi

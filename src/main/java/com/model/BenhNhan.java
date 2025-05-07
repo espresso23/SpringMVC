@@ -1,16 +1,16 @@
 package com.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 import java.time.LocalDate;
 
 @Entity
 public class BenhNhan {
     @Id
-    private String maBenNhan;
+    private String maBenhNhan;
 
     private String tenBenhNhan;
 
@@ -66,12 +66,12 @@ public class BenhNhan {
         this.gioiTinh = gioiTinh;
     }
 
-    public String getMaBenNhan() {
-        return maBenNhan;
+    public String getMaBenhNhan() {
+        return maBenhNhan;
     }
 
-    public void setMaBenNhan(String maBenNhan) {
-        this.maBenNhan = maBenNhan;
+    public void setMaBenhNhan(String maBenhNhan) {
+        this.maBenhNhan = maBenhNhan;
     }
 
     public LocalDate getNgayCachLy() {

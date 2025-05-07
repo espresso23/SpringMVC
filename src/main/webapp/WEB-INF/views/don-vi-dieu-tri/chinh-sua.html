@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa đơn vị điều trị</title>
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+        
+        .card {
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Chỉnh sửa đơn vị điều trị</h3>
+                    <a th:href="@{/don-vi-dieu-tri/danh-sach}" class="btn btn-outline-secondary">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Hiển thị thông báo lỗi nếu có -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Form chỉnh sửa -->
+                <form th:action="@{/don-vi-dieu-tri/chinh-sua/{id}(id=${donViDieuTri.maDonVi})}" th:object="${donViDieuTri}" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="maDonVi" class="form-label">Mã đơn vị</label>
+                                <input type="text" class="form-control" id="maDonVi" th:field="*{maDonVi}" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tenDonVi" class="form-label required-field">Tên đơn vị</label>
+                                <input type="text" class="form-control" id="tenDonVi" th:field="*{tenDonVi}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tinhThanh" class="form-label required-field">Tỉnh thành</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="tinhThanh" th:field="*{tinhThanh.maTinhThanh}" required>
+                                        <option value="">Chọn tỉnh thành</option>
+                                        <option th:each="tinh : ${tinhThanhList}"
+                                                th:value="${tinh.maTinhThanh}"
+                                                th:text="${tinh.tenTinhThanh}">
+                                        </option>
+                                    </select>
+                                    <a th:href="@{/tinh-thanh/them-moi}" class="btn btn-outline-secondary" title="Thêm tỉnh thành mới">
+                                        Thêm mới
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="diaChi" class="form-label required-field">Địa chỉ</label>
+                                <input type="text" class="form-control" id="diaChi" th:field="*{diaChi}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Cập nhật</button>
+                        <button type="reset" class="btn btn-secondary">Khôi phục</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html> 

@@ -49,10 +49,20 @@ public class BenhNhanService {
      */
     public BenhNhan createBenhNhan(BenhNhan benhNhan) {
         DonViDieuTri donViDieuTri = donViDieuTriRepository.findById(benhNhan.getDonViDieuTri().getMaDonVi())
-                .orElseThrow(() -> new RuntimeException("Ma don vi khong ton tai trong he thong"));
+                .orElseThrow(() -> new RuntimeException("Mã đơn vị không tồn tại trong hệ thống"));
         TinhThanh tinhThanh = tinhThanhRepository.findById(benhNhan.getTinhThanh().getMaTinhThanh())
-                .orElseThrow(() -> new RuntimeException("Ma tinh thanh khong ton tai trong he thong"));
-
+                .orElseThrow(() -> new RuntimeException("Mã tỉnh thành không tồn tại trong hệ thống"));
+        
+        // Kiểm tra xem đơn vị điều trị có thuộc về tỉnh thành của bệnh nhân không
+        String maTinhCuaDonVi = donViDieuTriRepository.getMaTinhByMaDonVi(donViDieuTri.getMaDonVi());
+        if (!maTinhCuaDonVi.equals(tinhThanh.getMaTinhThanh())) {
+            throw new RuntimeException("Đơn vị điều trị không thuộc về tỉnh thành mà bệnh nhân đang sinh sống");
+        }
+        
+        // Gán lại các đối tượng đã tìm thấy
+        benhNhan.setDonViDieuTri(donViDieuTri);
+        benhNhan.setTinhThanh(tinhThanh);
+        
         return benhNhanRepository.save(benhNhan);
     }
 
@@ -96,7 +106,7 @@ public class BenhNhanService {
      */
     public BenhNhan getBenhNhanById(String maBenhNhan) {
         Optional<BenhNhan> optionalBenhNhan = benhNhanRepository.findById(maBenhNhan);
-        return optionalBenhNhan.orElse(null);
+        return optionalBenhNhan.orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân với ID: " + maBenhNhan));
     }
 
     /**
@@ -120,5 +130,21 @@ public class BenhNhanService {
         } else {
             throw new RuntimeException("Don vi dieu tri khong thuoc ve tinh thanh ma benh nhan dang sinh song");
         }
+    }
+
+    /**
+     * Xóa bệnh nhân theo mã
+     * 
+     * @param maBenhNhan Mã bệnh nhân cần xóa
+     * @throws RuntimeException Nếu không tìm thấy bệnh nhân hoặc có lỗi khi xóa
+     */
+    public void deleteBenhNhan(String maBenhNhan) {
+        // Kiểm tra bệnh nhân có tồn tại không
+        if (!benhNhanRepository.existsById(maBenhNhan)) {
+            throw new RuntimeException("Không tìm thấy bệnh nhân với mã: " + maBenhNhan);
+        }
+        
+        // Thực hiện xóa
+        benhNhanRepository.deleteById(maBenhNhan);
     }
 }

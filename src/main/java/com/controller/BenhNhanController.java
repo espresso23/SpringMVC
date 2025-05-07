@@ -3,29 +3,41 @@ package com.controller;
 // Import required classes and annotations
 import com.model.*;
 import com.service.BenhNhanService;
+import com.service.DonViDieuTriService;
+import com.service.TinhThanhService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
+
 
 @Controller
 @RequestMapping("/benhnhan") // Base URL for handling requests related to BenhNhan
 public class BenhNhanController {
     private BenhNhanService benhNhanService;
+    private TinhThanhService tinhThanhService;
+    private DonViDieuTriService donViDieuTriService;
 
     // Constructor-based dependency injection
     @Autowired
-    public BenhNhanController(BenhNhanService benhNhanService) {
+    public BenhNhanController(BenhNhanService benhNhanService, 
+                             TinhThanhService tinhThanhService,
+                             DonViDieuTriService donViDieuTriService) {
         this.benhNhanService = benhNhanService;
+        this.tinhThanhService = tinhThanhService;
+        this.donViDieuTriService = donViDieuTriService;
     }
 
     // Display the form to add a new BenhNhan
     @GetMapping("")
     public String showPageBenhNhan(Model model) {
         model.addAttribute("benhNhan", new BenhNhan()); // Add an empty BenhNhan object to the model
+        model.addAttribute("tinhThanhList", tinhThanhService.getAllTinhThanh());
+        model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
         return "addBenhNhan"; // Return the view for adding BenhNhan
     }
 
@@ -33,12 +45,28 @@ public class BenhNhanController {
     @PostMapping("/addBenhNhan")
     public String addBenhNhan(@ModelAttribute("benhNhan") BenhNhan benhNhan, RedirectAttributes redirectAttributes) {
         try {
-            benhNhanService.createBenhNhan(benhNhan); // Save BenhNhan to the database
-            redirectAttributes.addFlashAttribute("successMessage", "Add Benh Nhan successfully");
-            return "redirect:/benhnhan/list"; // Redirect to the list page
+            // Kiểm tra xem mã bệnh nhân đã tồn tại chưa
+            try {
+                BenhNhan existingBenhNhan = benhNhanService.getBenhNhanById(benhNhan.getMaBenhNhan());
+                if (existingBenhNhan != null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Mã bệnh nhân '" + benhNhan.getMaBenhNhan() + "' đã tồn tại!");
+                    return "redirect:/benhnhan";
+                }
+            } catch (Exception e) {
+                // Nếu không tìm thấy bệnh nhân (mã chưa tồn tại) thì tiếp tục thêm mới
+                benhNhanService.createBenhNhan(benhNhan);
+                redirectAttributes.addFlashAttribute("successMessage", "Thêm bệnh nhân thành công!");
+                return "redirect:/benhnhan/list";
+            }
+            
+            // Nếu không có lỗi và không tìm thấy bệnh nhân trùng mã
+            benhNhanService.createBenhNhan(benhNhan);
+            redirectAttributes.addFlashAttribute("successMessage", "Thêm bệnh nhân thành công!");
+            return "redirect:/benhnhan/list";
+            
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage()); // Handle errors
-            return "redirect:/benhnhan"; // Redirect back to the form page
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi thêm bệnh nhân: " + e.getMessage());
+            return "redirect:/benhnhan";
         }
     }
 
@@ -46,31 +74,74 @@ public class BenhNhanController {
     @GetMapping("/list")
     public String showListBenhNhan(Model model) {
         List<BenhNhan> listBenhNhan = benhNhanService.getAllBenhNhan(); // Fetch all BenhNhan
-        model.addAttribute("listBenhNhan", listBenhNhan); // Add list to the model
+        model.addAttribute("listBenhNhan", listBenhNhan);
+        // Thêm danh sách tỉnh thành và đơn vị điều trị cho bộ lọc
+        model.addAttribute("tinhThanhList", tinhThanhService.getAllTinhThanh());
+        model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
+        System.out.println("Debug - Số lượng bệnh nhân: " + (listBenhNhan != null ? listBenhNhan.size() : "null"));
         return "listBenhNhan"; // Return the view for displaying the list
     }
 
     // Display search results (optional)
     @GetMapping("/listsearch")
-    public String showListBenhNhansearh(Model model, RedirectAttributes redirectAttributes) {
+    public String showListBenhNhansearh(Model model) {
+        // Không cần dùng redirect attributes vì đang truy cập trực tiếp đến view
         List<BenhNhan> listBenhNhan = benhNhanService.getAllBenhNhan(); // Fetch all BenhNhan
-        redirectAttributes.addFlashAttribute("listBenhNhan", listBenhNhan); // Pass the list as flash attributes
+        model.addAttribute("listBenhNhan", listBenhNhan); // Sử dụng model trực tiếp thay vì redirectAttributes
+        // Thêm danh sách tỉnh thành và đơn vị điều trị cho bộ lọc
+        model.addAttribute("tinhThanhList", tinhThanhService.getAllTinhThanh());
+        model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
+        System.out.println("Debug - Số lượng bệnh nhân (search): " + (listBenhNhan != null ? listBenhNhan.size() : "null"));
         return "listBenhNhan"; // Return the view for displaying the list
     }
 
     // Search BenhNhan by "soCMND"
     @GetMapping("/search")
-    public String searchByCMND(@RequestParam("soCMND") String soCMND,
-                                     RedirectAttributes redirectAttributes) {
-        List<BenhNhan> benhNhanList = benhNhanService.getBenhNhansBySoCMND(soCMND.trim()); // Search for BenhNhan
+    public String searchByCMND(@RequestParam(value = "soCMND", required = false) String soCMND,
+                               Model model) {
+        
+        // Mặc định lấy tất cả bệnh nhân
+        List<BenhNhan> benhNhanList = new ArrayList<>();
+        String message = null;
+        
+        try {
+            // Nếu có tìm kiếm theo CMND
+            if (soCMND != null && !soCMND.trim().isEmpty()) {
+                benhNhanList = benhNhanService.getBenhNhansBySoCMND(soCMND.trim());
+                
+                if (benhNhanList.isEmpty()) {
+                    message = "Không tìm thấy bệnh nhân với số CMND: '" + soCMND + "'";
+                } else {
+                    model.addAttribute("searchKeyword", soCMND);
+                }
 
-        if (benhNhanList.isEmpty()) {
-            redirectAttributes.addFlashAttribute("notFoundMessage", "Không tìm thấy bệnh nhân với số: '" + soCMND + "'"); // Handle not found case
-        } else {
-            redirectAttributes.addFlashAttribute("listBenhNhan", benhNhanList); // Pass results
-            redirectAttributes.addFlashAttribute("searchKeyword", soCMND); // Save search keyword
+            } else {
+                // Nếu không có tiêu chí tìm kiếm nào, lấy tất cả bệnh nhân
+                benhNhanList = benhNhanService.getAllBenhNhan();
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi khi tìm kiếm bệnh nhân: " + e.getMessage());
+            e.printStackTrace();
+            message = "Đã xảy ra lỗi khi tìm kiếm: " + e.getMessage();
+            // Đảm bảo danh sách không null
+            benhNhanList = new ArrayList<>();
         }
-        return "redirect:/benhnhan/listsearch"; // Redirect to the search results page
+        
+        // In ra log để debug
+        System.out.println("Debug - Tìm kiếm - Số lượng bệnh nhân: " + (benhNhanList != null ? benhNhanList.size() : "danh sách null"));
+        
+        // Đảm bảo danh sách không null
+        if (benhNhanList == null) {
+            benhNhanList = new ArrayList<>();
+        }
+        
+        model.addAttribute("listBenhNhan", benhNhanList);
+        
+        if (message != null) {
+            model.addAttribute("notFoundMessage", message);
+        }
+        
+        return "listBenhNhan";
     }
 
     //show form edit benh nhan
@@ -87,6 +158,7 @@ public class BenhNhanController {
         }
 
         model.addAttribute("benhNhan", benhNhan);
+        model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
         return "editBenhNhan";
     }
 
@@ -103,5 +175,28 @@ public class BenhNhanController {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật: " + e.getMessage());
             return "redirect:/benhnhan/edit/" + maBenhNhan;
         }
+    }
+
+    /**
+     * Xóa bệnh nhân theo mã
+     */
+    @GetMapping("/delete/{maBenhNhan}")
+    public String deleteBenhNhan(@PathVariable("maBenhNhan") String maBenhNhan,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            // Kiểm tra bệnh nhân có tồn tại không
+            BenhNhan benhNhan = benhNhanService.getBenhNhanById(maBenhNhan);
+            if (benhNhan == null) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy bệnh nhân với mã: " + maBenhNhan);
+                return "redirect:/benhnhan/list";
+            }
+            
+            // Thực hiện xóa
+            benhNhanService.deleteBenhNhan(maBenhNhan);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa bệnh nhân thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi xóa bệnh nhân: " + e.getMessage());
+        }
+        return "redirect:/benhnhan/list";
     }
 }

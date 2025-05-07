@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Danh sách tỉnh thành</title>
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Danh sách tỉnh thành</h3>
+                    <a th:href="@{/tinh-thanh/them-moi}" class="btn btn-primary">Thêm tỉnh thành mới</a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Thông báo -->
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <span th:text="${success}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <span th:text="${error}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Bảng danh sách -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Mã tỉnh thành</th>
+                                <th>Tên tỉnh thành</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="tinhThanh : ${tinhThanhList}">
+                                <td th:text="${tinhThanh.maTinhThanh}"></td>
+                                <td th:text="${tinhThanh.tenTinhThanh}"></td>
+                                <td>
+                                    <a th:href="@{/tinh-thanh/chinh-sua/{id}(id=${tinhThanh.maTinhThanh})}" 
+                                    class="btn btn-warning btn-sm">Sửa</a>
+                                    <a th:href="@{/tinh-thanh/xoa/{id}(id=${tinhThanh.maTinhThanh})}" 
+                                    class="btn btn-danger btn-sm"
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa tỉnh thành này?')">Xóa</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${tinhThanhList.empty}">
+                                <td colspan="3" class="text-center">Không có dữ liệu</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html> 

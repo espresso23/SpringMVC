@@ -1,36 +1,378 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Benh Nhan</title>
-</head>
-<link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
-<body>
-<h1>Edit Bệnh Nhân</h1>
-<div class="container mt-4">
-    <div th:if="${successMessage}" class="alert alert-success"
-         style="color: green; padding: 10px; margin: 10px 0; border: 1px solid green;">
-        <span th:text="${successMessage}"></span>
-    </div>
+    <title>Chỉnh sửa bệnh nhân</title>
+    <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #34495e;      /* Màu chủ đạo - xanh đậm trung tính */
+            --secondary-color: #7f8c8d;    /* Màu phụ - xám trung tính */
+            --accent-color: #e74c3c;       /* Màu nhấn - đỏ */
+            --success-color: #27ae60;      /* Màu thành công - xanh lá */
+            --warning-color: #f39c12;      /* Màu cảnh báo - cam */
+            --light-bg: #f5f6fa;           /* Màu nền nhẹ - xám rất nhạt */
+            --dark-text: #2c3e50;          /* Màu chữ tối - xanh đậm */
+            --light-text: #ffffff;         /* Màu chữ sáng - trắng */
+            --border-color: #dcdde1;       /* Màu viền - xám nhạt */
+            --hover-color: #f1f2f6;        /* Màu hover - xám rất nhạt */
+        }
 
-    <!-- Hiển thị thông báo lỗi -->
-    <div th:if="${errorMessage}" class="alert alert-danger"
-         style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red;">
-        <span th:text="${errorMessage}"></span>
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            background: white;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            border-radius: 1rem 1rem 0 0 !important;
+            padding: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 2rem;
+        }
+        
+        .info-section {
+            background-color: var(--light-bg);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-value {
+            color: var(--dark-text);
+            padding: 0.75rem;
+            background-color: white;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .form-label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 73, 94, 0.15);
+        }
+        
+        .form-select {
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 73, 94, 0.15);
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+        }
+        
+        .btn-primary:hover {
+            background-color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #6c7a7d;
+            transform: translateY(-2px);
+            color: var(--light-text);
+        }
+        
+        .alert {
+            border-radius: 0.5rem;
+            padding: 1rem 1.5rem;
+            margin-bottom: 1.5rem;
+            border: none;
+        }
+        
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+        
+        .alert-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--accent-color);
+            border-left: 4px solid var(--accent-color);
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: var(--accent-color);
+            margin-left: 4px;
+        }
+        
+        .back-button {
+            color: var(--light-text);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-button:hover {
+            color: var(--light-text);
+            opacity: 0.8;
+            transform: translateX(-5px);
+        }
+        
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .invalid-feedback {
+            color: var(--accent-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .is-invalid {
+            border-color: var(--accent-color) !important;
+        }
+
+        .is-invalid:focus {
+            box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.15) !important;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Chỉnh Sửa Bệnh Nhân</h3>
+                <a th:href="@{/benhnhan/list}" class="back-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
+                    </svg>
+                    Quay lại
+                </a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Thông tin cơ bản -->
+            <div class="info-section">
+                <h4 class="section-title">Thông Tin Cơ Bản</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Mã bệnh nhân</div>
+                            <div class="info-value" th:text="${benhNhan.maBenhNhan}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Tên bệnh nhân</div>
+                            <div class="info-value" th:text="${benhNhan.tenBenhNhan}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Số CMND</div>
+                            <div class="info-value" th:text="${benhNhan.soCMND}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Giới tính</div>
+                            <div class="info-value" th:text="${benhNhan.gioiTinh}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Ngày sinh</div>
+                            <div class="info-value" th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <div class="info-label">Số điện thoại</div>
+                            <div class="info-value" th:text="${benhNhan.soDienThoai}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="info-label">Địa chỉ</div>
+                            <div class="info-value" th:text="${benhNhan.diaChi}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <div class="info-label">Tỉnh/Thành phố</div>
+                            <div class="info-value" th:text="${benhNhan.tinhThanh.tenTinhThanh}"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill me-2" viewBox="0 0 16 16">
+                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                </svg>
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill me-2" viewBox="0 0 16 16">
+                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+                <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <form th:action="@{/benhnhan/update/{maBenhNhan}(maBenhNhan=${benhNhan.maBenhNhan})}"
+                  th:object="${benhNhan}" 
+                  method="post"
+                  id="editBenhNhanForm">
+                <input type="hidden" th:field="*{maBenhNhan}">
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label for="ngayCachLy" class="form-label">Ngày Cách Ly <span class="required-field"></span></label>
+                            <input type="date" class="form-control" id="ngayCachLy" name="ngayCachLy"
+                                   th:value="${benhNhan.ngayCachLy}" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('ngayCachLy')}"
+                                 th:errors="*{ngayCachLy}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group mb-4">
+                            <label for="donViDieuTri" class="form-label">Đơn Vị Điều Trị <span class="required-field"></span></label>
+                            <select class="form-select" id="donViDieuTri" name="donViDieuTri.maDonVi" required>
+                                <option value="">Chọn đơn vị điều trị</option>
+                                <option th:each="donVi : ${donViList}"
+                                        th:value="${donVi.maDonVi}"
+                                        th:text="${donVi.tenDonVi}"
+                                        th:selected="${donVi.maDonVi == benhNhan.donViDieuTri.maDonVi}">
+                                </option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('donViDieuTri')}"
+                                 th:errors="*{donViDieuTri}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-save me-2" viewBox="0 0 16 16">
+                            <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+                        </svg>
+                        Lưu thay đổi
+                    </button>
+                    <a th:href="@{/benhnhan/list}" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle me-2" viewBox="0 0 16 16">
+                            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708z"/>
+                        </svg>
+                        Hủy
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
-    <form th:action="@{/benhnhan/update/{maBenhNhan}(maBenhNhan=${benhNhan.maBenNhan})}" th:object="${benhNhan}" method="post">
-        <input type="hidden" th:field="*{maBenNhan}">
-        <div class="form-group mb-3">
-            <label for="ngayCachLy">Ngày Cách Ly</label>
-            <input type="date" class="form-control" id="ngayCachLy" th:field="*{ngayCachLy}" required>
-        </div>
-        <div class="form-group mb-3">
-            <label for="maDonVi">Mã Đơn Vị</label>
-            <input type="text" class="form-control" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Cập nhật</button>
-    </form>
 </div>
-</body>
+
 <script th:src="@{resources/js/bootstrap.bundle.min.js}"></script>
+<script>
+    window.onload = function() {
+        document.getElementById('editBenhNhanForm').addEventListener('submit', function(event) {
+            let isValid = true;
+            
+            // Kiểm tra ngày cách ly
+            const ngayCachLy = document.getElementById('ngayCachLy').value;
+            if (!ngayCachLy) {
+                document.getElementById('ngayCachLy').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('ngayCachLy').classList.remove('is-invalid');
+            }
+            
+            // Kiểm tra đơn vị điều trị
+            const donViDieuTri = document.getElementById('donViDieuTri').value;
+            if (!donViDieuTri) {
+                document.getElementById('donViDieuTri').classList.add('is-invalid');
+                isValid = false;
+            } else {
+                document.getElementById('donViDieuTri').classList.remove('is-invalid');
+            }
+            
+            if (!isValid) {
+                event.preventDefault();
+                // Cuộn đến lỗi đầu tiên
+                const firstError = document.querySelector('.is-invalid');
+                if (firstError) {
+                    firstError.focus();
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    };
+</script>
+</body>
 </html>

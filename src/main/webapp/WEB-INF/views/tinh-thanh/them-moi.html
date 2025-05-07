@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm tỉnh thành mới</title>
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 4px;
+        }
+        
+        .card {
+            margin-bottom: 2rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            padding: 1rem 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">Thêm tỉnh thành mới</h3>
+                    <div>
+                        <a th:href="@{/tinh-thanh/danh-sach}" class="btn btn-outline-secondary me-2">
+                            Danh sách tỉnh thành
+                        </a>
+                        <a th:href="@{/benhnhan}" class="btn btn-outline-primary">
+                            Quay lại thêm bệnh nhân
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Hiển thị thông báo lỗi nếu có -->
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+                    <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+
+                <!-- Form thêm mới -->
+                <form th:action="@{/tinh-thanh/them-moi}" th:object="${tinhThanh}" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="maTinhThanh" class="form-label required-field">Mã tỉnh thành</label>
+                                <input type="text" class="form-control" id="maTinhThanh" th:field="*{maTinhThanh}" required
+                                       placeholder="Nhập mã tỉnh thành (VD: HN, HCM)">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tenTinhThanh" class="form-label required-field">Tên tỉnh thành</label>
+                                <input type="text" class="form-control" id="tenTinhThanh" th:field="*{tenTinhThanh}" required
+                                       placeholder="Nhập tên tỉnh thành">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                        <button type="reset" class="btn btn-secondary">Nhập lại</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h4 class="mb-0">Bước tiếp theo</h4>
+            </div>
+            <div class="card-body">
+                <p>Sau khi thêm tỉnh thành, bạn có thể:</p>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/don-vi-dieu-tri/them-moi}" class="btn btn-success">
+                        Thêm đơn vị điều trị
+                    </a>
+                    <a th:href="@{/benhnhan}" class="btn btn-primary">
+                        Quay lại thêm bệnh nhân
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html> 

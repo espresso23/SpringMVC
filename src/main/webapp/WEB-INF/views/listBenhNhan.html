@@ -2,174 +2,522 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Danh sách bệnh nhân</title>
-    <link th:href="@{resources/css/bootstrap.min.css}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý bệnh nhân COVID-19</title>
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --border-color: #dee2e6;
+            --active-color: #d1e7dd;
+            --inactive-color: #f8d7da;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            color: var(--dark-color);
+        }
+        
+        .container {
+            max-width: 1280px;
+        }
+        
         .card {
             margin-bottom: 2rem;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--border-color);
             border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background-color: #ffffff;
         }
 
         .card-header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
+            background-color: var(--light-color);
+            border-bottom: 1px solid var(--border-color);
             padding: 1rem 1.5rem;
+        }
+        
+        .card-body {
+            padding: 1.5rem;
         }
 
         .table {
             margin-bottom: 0;
+            vertical-align: middle;
         }
 
         .table th {
-            background-color: #f8f9fa;
+            background-color: var(--light-color);
             border-top: none;
+            font-weight: 600;
+            padding: 0.75rem;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+            color: var(--secondary-color);
+        }
+        
+        .table td {
+            padding: 1rem 0.75rem;
         }
 
         .table-hover tbody tr:hover {
-            background-color: rgba(0, 0, 0, 0.02);
-        }
-
-        .badge {
-            font-weight: normal;
+            background-color: rgba(0, 0, 0, 0.03);
         }
 
         .search-form {
-            max-width: 400px;
+            max-width: 500px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.35rem 0.65rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-active {
+            background-color: var(--active-color);
+            color: #0f5132;
+            border: 1px solid #b6d7c3;
+        }
+
+        .status-inactive {
+            background-color: var(--inactive-color);
+            color: #842029;
+            border: 1px solid #f1aeb5;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background-color: var(--light-color);
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .patient-details {
+            display: none;
+            background-color: #f8f9fa;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+        }
+        
+        .patient-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .patient-card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .patient-card-header {
+            background-color: var(--light-color);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .patient-card-body {
+            padding: 1.5rem;
+        }
+        
+        .patient-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
+        }
+        
+        .patient-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .patient-info-item {
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-label {
+            font-weight: 500;
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+            font-size: 0.85rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .patient-actions {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        
+        .btn-toggle-details {
+            cursor: pointer;
+            color: var(--primary-color);
+            background: none;
+            border: none;
+            padding: 0;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.15s ease-in-out;
+        }
+        
+        .btn-toggle-details:hover {
+            color: #0a58ca;
+            text-decoration: underline;
+        }
+        
+        .btn-grid-view, .btn-table-view {
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.25rem;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            cursor: pointer;
+            transition: all 0.15s ease-in-out;
+            font-size: 0.875rem;
+        }
+        
+        .btn-grid-view.active, .btn-table-view.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .grid-view-container {
+            display: none;
+        }
+        
+        .grid-view-container.active {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .table-view-container {
+            display: none;
+        }
+        
+        .table-view-container.active {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .grid-view-container.active {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .header-actions h3 {
+                margin-bottom: 0;
+            }
         }
     </style>
 </head>
 <body>
 <div class="container py-4">
     <!-- Thông báo -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show mb-4">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    
     <div th:if="${notFoundMessage}" class="alert alert-warning alert-dismissible fade show mb-4">
         <span th:text="${notFoundMessage}"></span>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 
-    <!-- Bảng Danh Sách Xe -->
+    <!-- Danh Sách Bệnh Nhân -->
     <div class="card">
         <div class="card-header">
-            <h3 class="mb-0">Danh Sách Bệnh Nhân</h3>
+            <div class="header-actions">
+                <h3 class="mb-0">Danh Sách Bệnh Nhân COVID-19</h3>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/benhnhan}" class="btn btn-primary">
+                        Thêm Bệnh Nhân Mới
+                    </a>
+                    <button class="btn btn-outline-secondary" onclick="toggleFilter()">
+                        Bộ lọc
+                    </button>
+                    
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn-table-view active" onclick="toggleView('table')">
+                            Bảng
+                        </button>
+                        <button type="button" class="btn-grid-view" onclick="toggleView('grid')">
+                            Lưới
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <form th:action="@{/benhnhan/search}" method="get" class="search-form">
-                            <div class="input-group">
-                                <input type="text" name="soCMND" class="form-control"
-                                       placeholder="Tìm bệnh nhân theo số CMND..." th:value="${searchKeyword}">
-                                <button type="submit" class="btn btn-outline-secondary">Tìm</button>
+        <div class="card-body">
+            <!-- Bộ lọc -->
+            <!-- Tìm kiếm nhanh -->
+            <form th:action="@{/benhnhan/search}" method="get" class="search-form mb-4">
+                <div class="input-group">
+                    <input type="text" name="soCMND" class="form-control"
+                           placeholder="Tìm bệnh nhân theo số CMND..." th:value="${searchKeyword}">
+                    <button type="submit" class="btn btn-outline-secondary">
+                        Tìm
+                    </button>
+                </div>
+            </form>
+
+            <!-- Hiển thị dạng bảng -->
+            <div id="tableView" class="table-view-container active">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã BN</th>
+                            <th>Họ và tên</th>
+                            <th>Số CMND</th>
+                            <th>Giới tính</th>
+                            <th>Ngày sinh</th>
+                            <th>Điện thoại</th>
+                            <th>Đơn vị điều trị</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="benhNhan, iterStat : ${listBenhNhan}" th:id="'patient-row-' + ${benhNhan.maBenhNhan}">
+                            <td th:text="${iterStat.index + 1}"></td>
+                            <td>
+                                <a th:href="@{/benhnhan/edit/{maBenhNhan}(maBenhNhan=${benhNhan.maBenhNhan})}"
+                                   class="text-decoration-none fw-medium">
+                                    <span th:text="${benhNhan.maBenhNhan}"></span>
+                                </a>
+                            </td>
+                            <td th:text="${benhNhan.tenBenhNhan}"></td>
+                            <td th:text="${benhNhan.soCMND}"></td>
+                            <td th:text="${benhNhan.gioiTinh}"></td>
+                            <td th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></td>
+                            <td th:text="${benhNhan.soDienThoai}"></td>
+                            <td th:text="${benhNhan.donViDieuTri != null ? benhNhan.donViDieuTri.tenDonVi : 'N/A'}"></td>
+<!--                            <td>-->
+<!--                                <span th:if="${benhNhan.ngayCachLy != null and #temporals.isAfter(benhNhan.ngayCachLy, #temporals.createNow())}"-->
+<!--                                      class="status-badge status-active">Đang cách ly</span>-->
+<!--                                <span th:unless="${benhNhan.ngayCachLy != null and #temporals.isAfter(benhNhan.ngayCachLy, #temporals.createNow())}"-->
+<!--                                      class="status-badge status-inactive">Đã hết cách ly</span>-->
+<!--                            </td>-->
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn-toggle-details" 
+                                            th:attr="data-patient-id=${benhNhan.maBenhNhan}" 
+                                            onclick="togglePatientDetails(this.getAttribute('data-patient-id'))">
+                                        Chi tiết
+                                    </button>
+                                    <a th:href="@{/benhnhan/edit/{maBenhNhan}(maBenhNhan=${benhNhan.maBenhNhan})}"
+                                       class="btn btn-sm btn-outline-primary btn-icon" title="Chỉnh sửa">
+                                        Sửa
+                                    </a>
+                                    <button class="btn btn-sm btn-outline-danger btn-icon" 
+                                            th:data-ma-benhnhan="${benhNhan.maBenhNhan}"
+                                            onclick="confirmDelete(this.getAttribute('data-ma-benhnhan'))"
+                                            title="Xóa">
+                                        Xóa
+                                    </button>
+                                </div>
+                                
+                                <!-- Chi tiết bệnh nhân trong bảng -->
+                                <div th:id="'patient-details-' + ${benhNhan.maBenhNhan}" class="patient-details">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Mã bệnh nhân:</strong> <span th:text="${benhNhan.maBenhNhan}"></span></p>
+                                            <p><strong>Họ và tên:</strong> <span th:text="${benhNhan.tenBenhNhan}"></span></p>
+                                            <p><strong>Số CMND:</strong> <span th:text="${benhNhan.soCMND}"></span></p>
+                                            <p><strong>Giới tính:</strong> <span th:text="${benhNhan.gioiTinh}"></span></p>
+                                            <p><strong>Ngày sinh:</strong> <span th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Số điện thoại:</strong> <span th:text="${benhNhan.soDienThoai}"></span></p>
+                                            <p><strong>Địa chỉ:</strong> <span th:text="${benhNhan.diaChi}"></span></p>
+                                            <p><strong>Tỉnh/Thành phố:</strong> <span th:text="${benhNhan.tinhThanh != null ? benhNhan.tinhThanh.tenTinhThanh : 'N/A'}"></span></p>
+                                            <p><strong>Đơn vị điều trị:</strong> <span th:text="${benhNhan.donViDieuTri != null ? benhNhan.donViDieuTri.tenDonVi : 'N/A'}"></span></p>
+                                            <p><strong>Ngày cách ly:</strong> <span th:text="${benhNhan.ngayCachLy != null ? #temporals.format(benhNhan.ngayCachLy, 'dd/MM/yyyy') : 'N/A'}"></span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${listBenhNhan != null and listBenhNhan.isEmpty()}">
+                            <td colspan="10" class="text-center text-muted py-3">
+                                Không có dữ liệu bệnh nhân
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Hiển thị dạng lưới card -->
+            <div id="gridView" class="grid-view-container">
+                <div th:each="benhNhan : ${listBenhNhan}" class="patient-card">
+                    <div class="patient-card-header">
+                        <div class="patient-name" th:text="${benhNhan.tenBenhNhan}"></div>
+<!--                        <span th:if="${benhNhan.ngayCachLy != null and #temporals.isAfter(benhNhan.ngayCachLy, #temporals.createNow())}"-->
+<!--                              class="status-badge status-active">Đang cách ly</span>-->
+<!--                        <span th:unless="${benhNhan.ngayCachLy != null and #temporals.isAfter(benhNhan.ngayCachLy, #temporals.createNow())}"-->
+<!--                              class="status-badge status-inactive">Đã hết cách ly</span>-->
+                    </div>
+                    <div class="patient-card-body">
+                        <div class="patient-info">
+                            <div class="patient-info-item">
+                                <div class="info-label">Mã bệnh nhân</div>
+                                <div class="info-value" th:text="${benhNhan.maBenhNhan}"></div>
                             </div>
-                        </form>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead>
-                    <tr>
-                        <th width="5%">STT</th>
-                        <th width="15%">Mã Bệnh Nhân</th>
-                        <th width="15%">Tên Bệnh Nhân</th>
-                        <th width="15%">Số CMND</th>
-                        <th width="20%">Giới Tính</th>
-                        <th width="15%">Ngày Sinh</th>
-                        <th width="15%">Địa Chỉ</th>
-                        <th width="15%">Số Điện Thoại</th>
-                        <th width="20%">Tên Tỉnh Thành</th>
-                        <th width="20%">Ngày Cách Ly</th>
-                        <th width="20%">Tên Đơn Vị</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="benhNhan, iterStat : ${listBenhNhan}">
-                        <td th:text="${iterStat.index + 1}"></td>
-                        <td>
-                            <a th:href="@{/benhnhan/edit/{maBenhNhan}(maBenhNhan=${benhNhan.maBenNhan})}"
-                               class="text-decoration-none">
-                                <span th:text="${benhNhan.maBenNhan}"></span>
+                            <div class="patient-info-item">
+                                <div class="info-label">Số CMND</div>
+                                <div class="info-value" th:text="${benhNhan.soCMND}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Giới tính</div>
+                                <div class="info-value" th:text="${benhNhan.gioiTinh}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Ngày sinh</div>
+                                <div class="info-value" th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Số điện thoại</div>
+                                <div class="info-value" th:text="${benhNhan.soDienThoai}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Địa chỉ</div>
+                                <div class="info-value" th:text="${benhNhan.diaChi}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Tỉnh/Thành phố</div>
+                                <div class="info-value" th:text="${benhNhan.tinhThanh != null ? benhNhan.tinhThanh.tenTinhThanh : 'N/A'}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Đơn vị điều trị</div>
+                                <div class="info-value" th:text="${benhNhan.donViDieuTri != null ? benhNhan.donViDieuTri.tenDonVi : 'N/A'}"></div>
+                            </div>
+                            <div class="patient-info-item">
+                                <div class="info-label">Ngày cách ly</div>
+                                <div class="info-value" th:text="${benhNhan.ngayCachLy != null ? #temporals.format(benhNhan.ngayCachLy, 'dd/MM/yyyy') : 'N/A'}"></div>
+                            </div>
+                        </div>
+                        <div class="patient-actions">
+                            <a th:href="@{/benhnhan/edit/{maBenhNhan}(maBenhNhan=${benhNhan.maBenhNhan})}"
+                               class="btn btn-sm btn-outline-primary">
+                                Chỉnh sửa
                             </a>
-                        </td>
-                        <td th:text="${benhNhan.tenBenhNhan}"></td>
-                        <td th:text="${benhNhan.soCMND}"></td>
-                        <td th:text="${benhNhan.gioiTinh}"></td>
-                        <td th:text="${#temporals.format(benhNhan.ngaySinh, 'dd/MM/yyyy')}"></td>
-                        <td th:text="${benhNhan.diaChi}"></td>
-                        <td th:text="${benhNhan.soDienThoai}"></td>
-                        <td th:text="${benhNhan.tinhThanh.tenTinhThanh}"></td>
-                        <td th:text="${#temporals.format(benhNhan.ngayCachLy, 'dd/MM/yyyy')}"></td>
-                        <td th:text="${benhNhan.donViDieuTri.tenDonVi}"></td>
-                    </tr>
-                    <tr th:if="${listXe != null and listXe.isEmpty()}">
-                        <td colspan="7" class="text-center text-muted py-3">
-                            Không có dữ liệu xe
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                            <button class="btn btn-sm btn-outline-danger"
+                                    th:data-ma-benhnhan="${benhNhan.maBenhNhan}"
+                                    onclick="confirmDelete(this.getAttribute('data-ma-benhnhan'))">
+                                Xóa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center py-4" th:if="${listBenhNhan != null and listBenhNhan.isEmpty()}">
+                    <p class="text-muted">Không có dữ liệu bệnh nhân</p>
+                </div>
             </div>
         </div>
     </div>
-
-    <!--    &lt;!&ndash; Bảng Danh Sách Lịch Trình &ndash;&gt;-->
-    <!--    <div class="card">-->
-    <!--        <div class="card-header d-flex justify-content-between align-items-center">-->
-    <!--            <h3 class="mb-0">Lịch Trình Xe</h3>-->
-    <!--            <form th:action="@{/lichtrinhxe/search}" method="get" class="search-form">-->
-    <!--                <div class="input-group">-->
-    <!--                    <input type="text" name="tenNhaXe" class="form-control"-->
-    <!--                           placeholder="Tìm nhà xe..." th:value="${searchKeyword}">-->
-    <!--                    <button type="submit" class="btn btn-outline-secondary">Tìm</button>-->
-    <!--                </div>-->
-    <!--            </form>-->
-    <!--        </div>-->
-    <!--        <div class="card-body p-0">-->
-    <!--            <div class="table-responsive">-->
-    <!--                <table class="table table-hover mb-0">-->
-    <!--                    <thead>-->
-    <!--                    <tr>-->
-    <!--                        <th width="5%">STT</th>-->
-    <!--                        <th width="10%">Mã Xe</th>-->
-    <!--                        <th width="15%">Thông tin Xe</th>-->
-    <!--                        <th width="15%">Tuyến</th>-->
-    <!--                        <th width="15%">Ngày/Giờ</th>-->
-    <!--                        <th width="15%">Tài xế</th>-->
-    <!--                        <th width="10%">Số HK</th>-->
-    <!--                        <th width="15%">Nhà Xe</th>-->
-    <!--                    </tr>-->
-    <!--                    </thead>-->
-    <!--                    <tbody>-->
-    <!--                    <tr th:each="lichTrinh, iterStat : ${listLichTrinhXe}">-->
-    <!--                        <td th:text="${iterStat.index + 1}"></td>-->
-    <!--                        <td>-->
-    <!--                            <a th:href="@{/lichtrinhxe/add/{maXe}(maXe=${lichTrinh.xe.maXe})}"-->
-    <!--                               class="text-decoration-none">-->
-    <!--                                <span th:text="${lichTrinh.xe.maXe}"></span>-->
-    <!--                            </a>-->
-    <!--                        </td>-->
-    <!--                        <td>-->
-    <!--                            <div th:text="${lichTrinh.xe.bienSo}"></div>-->
-    <!--                            <small class="text-muted" th:text="${lichTrinh.xe.hangSanXuat}"></small>-->
-    <!--                        </td>-->
-    <!--                        <td th:text="${lichTrinh.tuyenXe.tenTuyen}"></td>-->
-    <!--                        <td>-->
-    <!--                            <div th:text="${#temporals.format(lichTrinh.ngayXuatBen, 'dd/MM/yyyy')}"></div>-->
-    <!--                            <small class="text-muted" th:text="${#temporals.format(lichTrinh.gioXuatBen, 'HH:mm')}"></small>-->
-    <!--                        </td>-->
-    <!--                        <td th:text="${lichTrinh.tenTaiXe}"></td>-->
-    <!--                        <td>-->
-    <!--                            <span class="badge bg-light text-dark" th:text="${lichTrinh.soLuongHanhKhach}"></span>-->
-    <!--                        </td>-->
-    <!--                        <td th:text="${lichTrinh.xe.nhaXe.tenNhaXe}"></td>-->
-    <!--                    </tr>-->
-    <!--                    <tr th:if="${listLichTrinhXe != null and listLichTrinhXe.isEmpty()}">-->
-    <!--                        <td colspan="8" class="text-center text-muted py-3">-->
-    <!--                            Không có lịch trình nào-->
-    <!--                        </td>-->
-    <!--                    </tr>-->
-    <!--                    </tbody>-->
-    <!--                </table>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </div>-->
 </div>
 
-<script th:src="@{resources/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+<script>
+
+    function toggleFilter() {
+        const filterSection = document.getElementById('filterSection');
+        filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function confirmDelete(maBenhNhan) {
+        if (confirm('Bạn có chắc chắn muốn xóa bệnh nhân này?')) {
+            window.location.href = /*[[@{/benhnhan/delete/}]]*/ '' + maBenhNhan;
+        }
+    }
+    
+    function togglePatientDetails(patientId) {
+        const detailsElement = document.getElementById('patient-details-' + patientId);
+        if (detailsElement.style.display === 'block') {
+            detailsElement.style.display = 'none';
+        } else {
+            // Ẩn tất cả các chi tiết khác trước khi hiển thị chi tiết hiện tại
+            document.querySelectorAll('.patient-details').forEach(element => {
+                element.style.display = 'none';
+            });
+            detailsElement.style.display = 'block';
+        }
+    }
+    
+    function toggleView(viewType) {
+        const tableView = document.getElementById('tableView');
+        const gridView = document.getElementById('gridView');
+        const tableViewBtn = document.querySelector('.btn-table-view');
+        const gridViewBtn = document.querySelector('.btn-grid-view');
+        
+        if (viewType === 'table') {
+            tableView.classList.add('active');
+            gridView.classList.remove('active');
+            tableViewBtn.classList.add('active');
+            gridViewBtn.classList.remove('active');
+        } else {
+            tableView.classList.remove('active');
+            gridView.classList.add('active');
+            tableViewBtn.classList.remove('active');
+            gridViewBtn.classList.add('active');
+        }
+    }
+</script>
 </body>
 </html>
