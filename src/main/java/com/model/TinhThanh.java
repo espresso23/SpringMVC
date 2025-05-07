@@ -7,6 +7,7 @@ public class TinhThanh {
     @Id
     private String maTinhThanh;
 
+    @Column(columnDefinition = "NVARCHAR(50)")
     private String tenTinhThanh;
 
     public TinhThanh() {

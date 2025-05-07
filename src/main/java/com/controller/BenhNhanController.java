@@ -67,14 +67,15 @@ public class BenhNhanController {
 
     // Display the list of BenhNhan
     @GetMapping("/list")
-    public String showListBenhNhan(Model model) {
-        List<BenhNhan> listBenhNhan = benhNhanService.getAllBenhNhan(); // Fetch all BenhNhan
+    public String showListBenhNhan(
+            @RequestParam(value = "sort", defaultValue = "tenBenhNhan") String sortBy,
+            @RequestParam(value = "dir", defaultValue = "asc") String direction,
+            Model model) {
+        List<BenhNhan> listBenhNhan = benhNhanService.getAllBenhNhanSorted(sortBy, direction);
         model.addAttribute("listBenhNhan", listBenhNhan);
-        // Thêm danh sách tỉnh thành và đơn vị điều trị cho bộ lọc
         model.addAttribute("tinhThanhList", tinhThanhService.getAllTinhThanh());
         model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
-        System.out.println("Debug - Số lượng bệnh nhân: " + (listBenhNhan != null ? listBenhNhan.size() : "null"));
-        return "listBenhNhan"; // Return the view for displaying the list
+        return "listBenhNhan";
     }
 
     // Display search results (optional)

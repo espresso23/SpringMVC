@@ -290,7 +290,18 @@
                     <button class="btn btn-outline-secondary" onclick="toggleFilter()">
                         Bộ lọc
                     </button>
-                    
+                    <form method="get" th:action="@{/benhnhan/list}" class="d-inline-block me-2">
+                        <label for="sortBy" class="me-1">Sắp xếp:</label>
+                        <select name="sort" id="sortBy" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                            <option value="tenBenhNhan" th:selected="${param.sort == 'tenBenhNhan'}">Tên bệnh nhân</option>
+                            <option value="maBenhNhan" th:selected="${param.sort == 'maBenhNhan'}">Mã bệnh nhân</option>
+                            <option value="ngayCachLy" th:selected="${param.sort == 'ngayCachLy'}">Ngày cách ly</option>
+                        </select>
+                        <select name="dir" class="form-select d-inline-block w-auto" onchange="this.form.submit()">
+                            <option value="asc" th:selected="${param.dir == 'asc'}">Tăng dần</option>
+                            <option value="desc" th:selected="${param.dir == 'desc'}">Giảm dần</option>
+                        </select>
+                    </form>
                     <div class="btn-group" role="group">
                         <button type="button" class="btn-table-view active" onclick="toggleView('table')">
                             Bảng
@@ -306,6 +317,8 @@
             <!-- Bộ lọc -->
             <!-- Tìm kiếm nhanh -->
             <form th:action="@{/benhnhan/search}" method="get" class="search-form mb-4">
+                <input type="hidden" name="sort" th:value="${param.sort}" />
+                <input type="hidden" name="dir" th:value="${param.dir}" />
                 <div class="input-group">
                     <input type="text" name="soCMND" class="form-control"
                            placeholder="Tìm bệnh nhân theo số CMND..." th:value="${searchKeyword}">
@@ -483,7 +496,7 @@
 
     function confirmDelete(maBenhNhan) {
         if (confirm('Bạn có chắc chắn muốn xóa bệnh nhân này?')) {
-            window.location.href = /*[[@{/benhnhan/delete/}]]*/ '' + maBenhNhan;
+            window.location.href = /*[[@{/benhnhan/delete/}]]*/ 'delete/' + maBenhNhan;
         }
     }
     

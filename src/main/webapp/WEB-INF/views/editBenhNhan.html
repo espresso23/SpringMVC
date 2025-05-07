@@ -303,15 +303,17 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-4">
-                            <label for="donViDieuTri" class="form-label">Đơn Vị Điều Trị <span class="required-field"></span></label>
-                            <select class="form-select" id="donViDieuTri" name="donViDieuTri.maDonVi" required>
-                                <option value="">Chọn đơn vị điều trị</option>
-                                <option th:each="donVi : ${donViList}"
-                                        th:value="${donVi.maDonVi}"
-                                        th:text="${donVi.tenDonVi}"
-                                        th:selected="${donVi.maDonVi == benhNhan.donViDieuTri.maDonVi}">
-                                </option>
-                            </select>
+                            <label for="maDonVi" class="form-label">Đơn Vị Điều Trị <span class="required-field"></span></label>
+                            <!--                            <select class="form-select" id="donViDieuTri" name="donViDieuTri.maDonVi" required>-->
+                            <!--                                <option value="">Chọn đơn vị điều trị</option>-->
+                            <!--                                <option th:each="donVi : ${donViList}"-->
+                            <!--                                        th:value="${donVi.maDonVi}"-->
+                            <!--                                        th:text="${donVi.tenDonVi}"-->
+                            <!--                                        th:selected="${donVi.maDonVi == benhNhan.donViDieuTri.maDonVi}">-->
+                            <!--                                </option>-->
+                            <!--                            </select>-->
+                            <input type="text" class="form-control" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" data-required="true">
+
                             <div class="invalid-feedback" th:if="${#fields.hasErrors('donViDieuTri')}"
                                  th:errors="*{donViDieuTri}"></div>
                         </div>

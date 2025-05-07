@@ -8,7 +8,7 @@ import java.time.LocalDate;
 public class BenhNhan {
     @Id
     private String maBenhNhan;
-
+    @Column(columnDefinition = "NVARCHAR(50)")
     private String tenBenhNhan;
 
     private String soCMND;

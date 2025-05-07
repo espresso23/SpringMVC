@@ -122,18 +122,20 @@
                     <div class="col-md-6">
                         <div class="form-group mb-3">
                             <label for="tinhThanh" class="form-label required-field">Tỉnh Thành</label>
-                            <div class="input-group">
-                                <select class="form-select" id="tinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
-                                    <option value="">Chọn tỉnh thành</option>
-                                    <option th:each="tinh : ${tinhThanhList}"
-                                            th:value="${tinh.maTinhThanh}"
-                                            th:text="${tinh.tenTinhThanh}">
-                                    </option>
-                                </select>
-                                <a th:href="@{/tinh-thanh/them-moi}" class="btn btn-outline-secondary" title="Thêm tỉnh thành mới">
-                                    Thêm mới
-                                </a>
-                            </div>
+<!--                            <div class="input-group">-->
+<!--                                <select class="form-select" id="tinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">-->
+<!--                                    <option value="">Chọn tỉnh thành</option>-->
+<!--                                    <option th:each="tinh : ${tinhThanhList}"-->
+<!--                                            th:value="${tinh.maTinhThanh}"-->
+<!--                                            th:text="${tinh.tenTinhThanh}">-->
+<!--                                    </option>-->
+<!--                                </select>-->
+<!--                                <a th:href="@{/tinh-thanh/them-moi}" class="btn btn-outline-secondary" title="Thêm tỉnh thành mới">-->
+<!--                                    Thêm mới-->
+<!--                                </a>-->
+<!--                            </div>-->
+                            <input type="text" class="form-control" id="tinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
+
                             <div class="error-message" id="maTinhThanh-error"></div>
                         </div>
                     </div>
@@ -148,18 +150,19 @@
                 
                 <div class="form-group mb-3">
                     <label for="donViDieuTri" class="form-label required-field">Đơn Vị Điều Trị</label>
-                    <div class="input-group">
-                        <select class="form-select" id="donViDieuTri" th:field="*{donViDieuTri.maDonVi}" data-required="true">
-                            <option value="">Chọn đơn vị điều trị</option>
-                            <option th:each="donVi : ${donViList}"
-                                    th:value="${donVi.maDonVi}"
-                                    th:text="${donVi.tenDonVi}">
-                            </option>
-                        </select>
-                        <a th:href="@{/don-vi-dieu-tri/them-moi}" class="btn btn-outline-secondary" title="Thêm đơn vị điều trị mới">
-                            Thêm mới
-                        </a>
-                    </div>
+<!--                    <div class="input-group">-->
+<!--                        <select class="form-select" id="donViDieuTri" th:field="*{donViDieuTri.maDonVi}" data-required="true">-->
+<!--                            <option value="">Chọn đơn vị điều trị</option>-->
+<!--                            <option th:each="donVi : ${donViList}"-->
+<!--                                    th:value="${donVi.maDonVi}"-->
+<!--                                    th:text="${donVi.tenDonVi}">-->
+<!--                            </option>-->
+<!--                        </select>-->
+<!--                        <a th:href="@{/don-vi-dieu-tri/them-moi}" class="btn btn-outline-secondary" title="Thêm đơn vị điều trị mới">-->
+<!--                            Thêm mới-->
+<!--                        </a>-->
+<!--                    </div>-->
+                    <input type="text" class="form-control" id="donViDieuTri" th:field="*{donViDieuTri.maDonVi}" data-required="true">
                     <div class="error-message" id="maDonVi-error"></div>
                 </div>
                 
@@ -243,14 +246,14 @@
             const donViError = document.getElementById('maDonVi-error');
             const donViSelect = document.getElementById('donViDieuTri');
 
-            if (selectedTinhThanh && selectedDonVi) {
-                // Kiểm tra nếu đơn vị điều trị không thuộc tỉnh thành được chọn
-                if (!Array.from(donViSelect.options).some(option => option.value === selectedDonVi)) {
-                    donViError.textContent = 'Đơn vị điều trị không thuộc tỉnh thành được chọn';
-                    donViSelect.classList.add('is-invalid');
-                    isValid = false;
-                }
-            }
+            // if (selectedTinhThanh && selectedDonVi) {
+            //     // Kiểm tra nếu đơn vị điều trị không thuộc tỉnh thành được chọn
+            //     if (!Array.from(donViSelect.options).some(option => option.value === selectedDonVi)) {
+            //         donViError.textContent = 'Đơn vị điều trị không thuộc tỉnh thành được chọn';
+            //         donViSelect.classList.add('is-invalid');
+            //         isValid = false;
+            //     }
+            // }
 
             // Hiển thị cảnh báo chung nếu có trường trống
             if (hasEmptyFields) {

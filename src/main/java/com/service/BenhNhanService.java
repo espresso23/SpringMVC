@@ -7,6 +7,7 @@ import com.repository.BenhNhanRepository;
 import com.repository.DonViDieuTriRepository;
 import com.repository.TinhThanhRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -147,5 +148,10 @@ public class BenhNhanService {
         
         // Thực hiện xóa
         benhNhanRepository.deleteById(maBenhNhan);
+    }
+
+    public List<BenhNhan> getAllBenhNhanSorted(String sortBy, String direction) {
+        Sort sort = direction.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        return benhNhanRepository.findAll(sort);
     }
 }
