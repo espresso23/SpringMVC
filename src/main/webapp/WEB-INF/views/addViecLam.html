@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Việc Làm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .main-container { max-width: 800px; margin: 40px auto; }
+        .card { border-radius: 1rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05); }
+        .form-label { font-weight: 500; }
+        .table { background: #fff; border-radius: 0.5rem; overflow: hidden; }
+        .alert { margin-bottom: 1.5rem; }
+    </style>
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<div class="main-container">
+    <div class="card p-4 mb-4">
+        <h1 class="mb-3 text-primary">Thêm Việc Làm</h1>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <form th:action="@{/vieclam/addViecLam}" method="post" th:object="${viecLam}" class="row g-3">
+            <div class="col-md-6">
+                <label for="maVL" class="form-label">Mã việc làm:</label>
+                <input type="text" id="maVL" th:field="*{maVL}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="moTa" class="form-label">Mô tả:</label>
+                <input type="text" id="moTa" th:field="*{moTa}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="duAn" class="form-label">Dự án:</label>
+                <input type="text" id="duAn" th:field="*{duAn}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngonNgu" class="form-label">Ngôn ngữ:</label>
+                <input type="text" id="ngonNgu" th:field="*{ngonNgu}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngayBD" class="form-label">Ngày bắt đầu:</label>
+                <input type="date" id="ngayBD" th:field="*{ngayBD}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngayKT" class="form-label">Ngày kết thúc:</label>
+                <input type="date" id="ngayKT" th:field="*{ngayKT}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="tongNgayCong" class="form-label">Tổng ngày công:</label>
+                <input type="number" id="tongNgayCong" th:field="*{tongNgayCong}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="trangThai" class="form-label">Trạng thái:</label>
+                <select id="trangThai" th:field="*{trangThai}" class="form-select">
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+            </div>
+        </form>
+    </div>
+    <div class="card p-4 mb-4">
+        <h2 class="mb-3 text-success">Danh sách Việc Làm Hiện Tại</h2>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Mã VL</th>
+                    <th>Mô tả</th>
+                    <th>Dự án</th>
+                    <th>Ngôn ngữ</th>
+                    <th>Ngày bắt đầu</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Tổng ngày công</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="vl : ${danhSachViecLam}">
+                    <td th:text="${vl.maVL}"></td>
+                    <td th:text="${vl.moTa}"></td>
+                    <td th:text="${vl.duAn}"></td>
+                    <td th:text="${vl.ngonNgu}"></td>
+                    <td th:text="${vl.ngayBD}"></td>
+                    <td th:text="${vl.ngayKT}"></td>
+                    <td th:text="${vl.tongNgayCong}"></td>
+                    <td th:text="${vl.trangThai}"></td>
+                    <td>
+                        <a th:href="@{/vieclam/edit/{maVL}(maVL=${vl.maVL})}" class="btn btn-sm btn-outline-primary">Chỉnh sửa</a>
+                    </td>
+                </tr>
+                <tr th:if="${danhSachViecLam == null or #lists.isEmpty(danhSachViecLam)}">
+                    <td colspan="9" class="text-center text-muted">Không có dữ liệu việc làm</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

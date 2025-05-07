@@ -150,7 +150,7 @@ public class BenhNhanController {
             return "redirect:/benhnhan/list";
         }
 
-        BenhNhan benhNhan = benhNhanOpt.get();
+        BenhNhan benhNhan = benhNhanOpt.get();//get ra doi tuong benh nhan
         model.addAttribute("benhNhan", benhNhan);
         model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
         return "editBenhNhan";

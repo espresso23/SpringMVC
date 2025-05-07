@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lỗi hệ thống</title>
+    <style>
+        .error-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ff4444;
+            background-color: #ffebee;
+            border-radius: 5px;
+        }
+        .error-title {
+            color: #d32f2f;
+        }
+        .error-message {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: white;
+            border-left: 4px solid #d32f2f;
+        }
+    </style>
+</head>
+<body>
+<div class="error-container">
+    <h1 class="error-title">Đã xảy ra lỗi</h1>
+    <div class="error-message" th:text="${errorMessage}"></div>
+    <a th:href="@{/dangky}" class="btn">Quay lại trang chủ</a>
+</div>
+</body>
+</html>

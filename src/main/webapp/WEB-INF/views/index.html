@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Ký Làm Thêm</title>
+    <link rel="stylesheet" th:href="@{/resources/css/bootstrap.min.css}">
+    <style>
+        body { background: #f8f9fa; }
+        .main-container { max-width: 900px; margin: 40px auto; }
+        .card { border-radius: 1rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05); }
+        .form-label { font-weight: 500; }
+        .table { background: #fff; border-radius: 0.5rem; overflow: hidden; }
+        .btn-edit, .btn-delete { margin-right: 0.25rem; }
+        .alert { margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+<div class="main-container">
+    <div class="card p-4 mb-4">
+        <h1 class="mb-3 text-primary">Đăng Ký Làm Thêm</h1>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <form th:action="@{/dangky/save}" method="post" th:object="${dangKyLamThem}" class="row g-3">
+            <div class="col-md-4">
+                <label for="maDK" class="form-label">Mã Đăng Kí</label>
+                <input type="text" id="maDK" name="maDK" th:field="*{maDK}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="maNV" class="form-label">Mã NV</label>
+                <input type="text" id="maNV" name="maNV" th:field="*{maNV}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="hoTen" class="form-label">Họ Tên</label>
+                <input type="text" id="hoTen" name="hoTen" th:field="*{hoTen}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="gioiTinh" class="form-label">Giới Tính</label>
+                <select id="gioiTinh" name="gioiTinh" th:field="*{gioiTinh}" class="form-select">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="capBac" class="form-label">Cấp Bậc</label>
+                <select id="capBac" name="capBac" th:field="*{capBac}" class="form-select" required>
+                    <option value="1">Cấp 1</option>
+                    <option value="2">Cấp 2</option>
+                    <option value="3">Cấp 3</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="maVL" class="form-label">Mã Việc Làm</label>
+                <input type="text" id="maVL" name="maVL" th:field="*{viecLam.maVL}" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label for="soNgayCong" class="form-label">Số Ngày Công</label>
+                <input type="number" id="soNgayCong" name="soNgayCong" th:field="*{soNgayCong}" class="form-control" required min="1" max="20">
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <button th:onclick="|window.location.href='@{/vieclam}'|" type="button" class="btn btn-outline-secondary">Thêm việc làm mới</button>
+            </div>
+        </form>
+    </div>
+    <div class="card p-4 mb-4">
+        <h2 class="mb-3 text-success">Danh Sách Đăng Ký</h2>
+        <form th:action="@{/dangky/search}" method="get" class="row g-2 mb-3 align-items-end">
+            <div class="col-md-5">
+                <input type="text" name="keyword" placeholder="Nhập từ khóa" th:value="${keyword}" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <select name="searchType" class="form-select">
+                    <option value="hoTen" th:selected="${searchType == 'hoTen'}">Tên nhân viên</option>
+                    <option value="maVL" th:selected="${searchType == 'maVL'}">Mã việc Làm</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-outline-primary w-100">Tìm kiếm</button>
+            </div>
+            <div class="col-md-2" th:if="${keyword != null}">
+                <a th:href="@{/dangky}" class="btn btn-link">Xem tất cả</a>
+            </div>
+        </form>
+        <div th:if="${keyword != null}" class="mb-2">
+            Kết quả tìm kiếm cho: <strong th:text="${keyword}"></strong> (theo <span th:text="${searchType == 'hoTen' ? 'tên nhân viên' : 'mã việc làm'}"></span>)
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Mã ĐK</th>
+                    <th>Mã NV</th>
+                    <th>Họ Tên</th>
+                    <th>Giới Tính</th>
+                    <th>Cấp Bậc</th>
+                    <th>Mã Việc Làm</th>
+                    <th>Số Ngày Công</th>
+                    <th>Tổng Tiền</th>
+                    <th>Hành Động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="dk : ${dangKyLamThemList}">
+                    <td th:text="${dk.maDK}"></td>
+                    <td th:text="${dk.maNV}"></td>
+                    <td th:text="${dk.hoTen}"></td>
+                    <td th:text="${dk.gioiTinh}"></td>
+                    <td th:text="${dk.capBac}"></td>
+                    <td th:text="${dk.viecLam.maVL}"></td>
+                    <td th:text="${dk.soNgayCong}"></td>
+                    <td th:text="${#numbers.formatInteger(dk.tongTien, 0, 'COMMA') + ' VND'}"></td>
+                    <td>
+                        <a th:href="@{/dangky/edit/{maDK}(maDK=${dk.maDK})}" class="btn btn-sm btn-outline-primary btn-edit">Sửa</a>
+                        <a th:href="@{/dangky/delete/{maDK}(maDK=${dk.maDK})}" class="btn btn-sm btn-outline-danger btn-delete">Xóa</a>
+                    </td>
+                </tr>
+                <tr th:if="${dangKyLamThemList == null or #lists.isEmpty(dangKyLamThemList)}">
+                    <td colspan="9" class="text-center text-muted">Không có dữ liệu đăng ký</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

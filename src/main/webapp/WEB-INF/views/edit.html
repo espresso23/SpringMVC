@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa đăng ký</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .main-container { max-width: 700px; margin: 40px auto; }
+        .card { border-radius: 1rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05); }
+        .form-label { font-weight: 500; }
+        .alert { margin-bottom: 1.5rem; }
+    </style>
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<div class="main-container">
+    <div class="card p-4 mb-4">
+        <h2 class="mb-3 text-primary">Chỉnh sửa đăng ký</h2>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <form id="editForm" th:action="@{/dangky/update/{maDK}(maDK=${dangKyLamThem.maDK})}" method="post"
+              th:object="${dangKyLamThem}" class="row g-3">
+            <input type="hidden" id="maDKEdit" th:field="*{maDK}">
+            <div class="col-md-6">
+                <label for="maNV" class="form-label">Mã NV:</label>
+                <input type="text" id="maNV" th:field="*{maNV}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="hoTen" class="form-label">Họ Tên:</label>
+                <input type="text" id="hoTen" th:field="*{hoTen}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="gioiTinh" class="form-label">Giới Tính:</label>
+                <select id="gioiTinh" th:field="*{gioiTinh}" class="form-select">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="capBac" class="form-label">Cấp Bậc:</label>
+                <select id="capBac" th:field="*{capBac}" class="form-select" required>
+                    <option value="1">Cấp 1</option>
+                    <option value="2">Cấp 2</option>
+                    <option value="3">Cấp 3</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="maVL" class="form-label">Mã Việc Làm:</label>
+                <input type="text" id="maVL" th:field="*{viecLam.maVL}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="soNgayCong" class="form-label">Số Ngày Công:</label>
+                <input type="number" id="soNgayCong" th:field="*{soNgayCong}" class="form-control" required min="1" max="20">
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa Việc Làm</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/resources/css/bootstrap.min.css}" rel="stylesheet">
+    <style>
+        body { background: #f8f9fa; }
+        .main-container { max-width: 700px; margin: 40px auto; }
+        .card { border-radius: 1rem; box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.05); }
+        .form-label { font-weight: 500; }
+        .alert { margin-bottom: 1.5rem; }
+    </style>
+    <script th:src="@{/resources/js/bootstrap.bundle.min.js}"></script>
+</head>
+<body>
+<div class="main-container">
+    <div class="card p-4 mb-4">
+        <h2 class="mb-3 text-primary">Chỉnh sửa Việc Làm</h2>
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show">
+            <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <form th:action="@{/vieclam/edit/{maVL}(maVL=${viecLam.maVL})}" method="post" th:object="${viecLam}" class="row g-3">
+            <input type="hidden" th:field="*{maVL}">
+            <div class="col-md-6">
+                <label for="moTa" class="form-label">Mô tả:</label>
+                <input type="text" id="moTa" th:field="*{moTa}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="duAn" class="form-label">Dự án:</label>
+                <input type="text" id="duAn" th:field="*{duAn}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngonNgu" class="form-label">Ngôn ngữ:</label>
+                <input type="text" id="ngonNgu" th:field="*{ngonNgu}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngayBD" class="form-label">Ngày bắt đầu: <span class="required-field"></span></label>
+                <input type="date" id="ngayBD" name="ngayBD"  th:value="${viecLam.ngayBD}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="ngayKT" class="form-label">Ngày kết thúc: <span class="required-field"></span></label>
+                <input type="date" id="ngayKT" name="ngayKT"  th:value="${viecLam.ngayKT}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="tongNgayCong" class="form-label">Tổng ngày công:</label>
+                <input type="number" id="tongNgayCong" th:field="*{tongNgayCong}" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label for="trangThai" class="form-label">Trạng thái:</label>
+                <select id="trangThai" th:field="*{trangThai}" class="form-select">
+                    <option value="Open">Open</option>
+                    <option value="Closed">Closed</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Cập nhật</button>
+                <a th:href="@{/vieclam}" class="btn btn-outline-secondary ms-2">Quay lại</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html> 
