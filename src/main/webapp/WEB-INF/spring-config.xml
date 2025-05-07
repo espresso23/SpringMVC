@@ -4,6 +4,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context
@@ -11,7 +12,9 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd
        http://www.springframework.org/schema/data/jpa
-       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+       http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!-- Quét component -->
     <context:component-scan base-package="com"/>
@@ -23,9 +26,9 @@
     <!-- Cấu hình tài nguyên tĩnh (JS) -->
     <mvc:resources mapping="/js/**" location="classpath:/js/"/>
     <mvc:resources mapping="/resources/**" location="/resources/" />
-    
+
     <!-- Cấu hình Thymeleaf -->
-    <bean id="templateResolver" class="org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver">
+    <bean id="templateResolver" class="org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
         <property name="suffix" value=".html"/>
         <property name="templateMode" value="HTML"/>
@@ -34,12 +37,12 @@
         <property name="cacheable" value="false"/>
     </bean>
 
-    <bean id="templateEngine" class="org.thymeleaf.spring5.SpringTemplateEngine">
+    <bean id="templateEngine" class="org.thymeleaf.spring6.SpringTemplateEngine">
         <property name="templateResolver" ref="templateResolver"/>
         <property name="enableSpringELCompiler" value="true"/>
     </bean>
 
-    <bean class="org.thymeleaf.spring5.view.ThymeleafViewResolver">
+    <bean class="org.thymeleaf.spring6.view.ThymeleafViewResolver">
         <property name="templateEngine" ref="templateEngine"/>
         <property name="order" value="1"/>
         <property name="characterEncoding" value="UTF-8"/>
@@ -60,13 +63,17 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="packagesToScan" value="com.model"/>
         <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <property name="showSql" value="true"/>
+                <property name="generateDdl" value="true"/>
+            </bean>
         </property>
         <property name="jpaProperties">
             <props>
                 <prop key="hibernate.dialect">org.hibernate.dialect.SQLServerDialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
             </props>
         </property>
     </bean>
@@ -75,6 +82,9 @@
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
+
+    <!-- Bật annotation-driven transaction -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- Bật JPA Repository -->
     <jpa:repositories base-package="com.repository"/>

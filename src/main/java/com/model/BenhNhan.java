@@ -1,9 +1,6 @@
 package com.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -23,6 +20,9 @@ public class BenhNhan {
     private String diaChi;
 
     private String soDienThoai;
+
+    public BenhNhan() {
+    }
 
     @ManyToOne
     @JoinColumn(name = "maTinhThanh")
@@ -112,5 +112,21 @@ public class BenhNhan {
 
     public void setTenBenhNhan(String tenBenhNhan) {
         this.tenBenhNhan = tenBenhNhan;
+    }
+
+    @Override
+    public String toString() {
+        return "BenhNhan{" +
+                "diaChi='" + diaChi + '\'' +
+                ", maBenhNhan='" + maBenhNhan + '\'' +
+                ", tenBenhNhan='" + tenBenhNhan + '\'' +
+                ", soCMND='" + soCMND + '\'' +
+                ", gioiTinh='" + gioiTinh + '\'' +
+                ", ngaySinh=" + ngaySinh +
+                ", soDienThoai='" + soDienThoai + '\'' +
+                ", tinhThanh=" + tinhThanh +
+                ", ngayCachLy=" + ngayCachLy +
+                ", donViDieuTri=" + donViDieuTri +
+                '}';
     }
 }

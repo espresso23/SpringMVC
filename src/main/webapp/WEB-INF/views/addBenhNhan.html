@@ -60,9 +60,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="maBenNhan" class="form-label required-field">Mã Bệnh Nhân</label>
-                            <input type="text" class="form-control" id="maBenNhan" th:field="*{maBenhNhan}" data-required="true">
-                            <div class="error-message" id="maBenNhan-error"></div>
+                            <label for="maBenhNhan" class="form-label required-field">Mã Bệnh Nhân</label>
+                            <input type="text" class="form-control" id="maBenhNhan" th:field="*{maBenhNhan}" data-required="true">
+                            <div class="error-message" id="maBenhNhan-error"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -121,9 +121,9 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group mb-3">
-                            <label for="maTinhThanh" class="form-label required-field">Tỉnh Thành</label>
+                            <label for="tinhThanh" class="form-label required-field">Tỉnh Thành</label>
                             <div class="input-group">
-                                <select class="form-select" id="maTinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
+                                <select class="form-select" id="tinhThanh" th:field="*{tinhThanh.maTinhThanh}" data-required="true">
                                     <option value="">Chọn tỉnh thành</option>
                                     <option th:each="tinh : ${tinhThanhList}"
                                             th:value="${tinh.maTinhThanh}"
@@ -147,9 +147,9 @@
                 </div>
                 
                 <div class="form-group mb-3">
-                    <label for="maDonVi" class="form-label required-field">Đơn Vị Điều Trị</label>
+                    <label for="donViDieuTri" class="form-label required-field">Đơn Vị Điều Trị</label>
                     <div class="input-group">
-                        <select class="form-select" id="maDonVi" th:field="*{donViDieuTri.maDonVi}" data-required="true">
+                        <select class="form-select" id="donViDieuTri" th:field="*{donViDieuTri.maDonVi}" data-required="true">
                             <option value="">Chọn đơn vị điều trị</option>
                             <option th:each="donVi : ${donViList}"
                                     th:value="${donVi.maDonVi}"
@@ -238,10 +238,10 @@
             }
 
             // Kiểm tra mối quan hệ giữa tỉnh thành và đơn vị điều trị
-            const selectedTinhThanh = document.getElementById('maTinhThanh').value;
-            const selectedDonVi = document.getElementById('maDonVi').value;
+            const selectedTinhThanh = document.getElementById('tinhThanh').value;
+            const selectedDonVi = document.getElementById('donViDieuTri').value;
             const donViError = document.getElementById('maDonVi-error');
-            const donViSelect = document.getElementById('maDonVi');
+            const donViSelect = document.getElementById('donViDieuTri');
 
             if (selectedTinhThanh && selectedDonVi) {
                 // Kiểm tra nếu đơn vị điều trị không thuộc tỉnh thành được chọn

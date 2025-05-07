@@ -51,7 +51,7 @@ public class TinhThanhController {
     }
 
     @GetMapping("/chinh-sua/{maTinhThanh}")
-    public String showEditForm(@PathVariable String maTinhThanh, Model model) {
+    public String showEditForm(@PathVariable("maTinhThanh") String maTinhThanh, Model model) {
         System.out.println("==> [TinhThanhController] GET /chinh-sua/" + maTinhThanh);
         TinhThanh tinhThanh = tinhThanhService.getTinhThanhById(maTinhThanh);
         if (tinhThanh == null) {
@@ -62,7 +62,7 @@ public class TinhThanhController {
     }
 
     @PostMapping("/chinh-sua/{maTinhThanh}")
-    public String updateTinhThanh(@PathVariable String maTinhThanh,
+    public String updateTinhThanh(@PathVariable("maTinhThanh") String maTinhThanh,
                                  @ModelAttribute("tinhThanh") TinhThanh tinhThanh,
                                  BindingResult result,
                                  RedirectAttributes redirectAttributes) {
@@ -81,7 +81,7 @@ public class TinhThanhController {
     }
 
     @GetMapping("/xoa/{maTinhThanh}")
-    public String deleteTinhThanh(@PathVariable String maTinhThanh,
+    public String deleteTinhThanh(@PathVariable("maTinhThanh") String maTinhThanh,
                                  RedirectAttributes redirectAttributes) {
         try {
             tinhThanhService.deleteTinhThanh(maTinhThanh);

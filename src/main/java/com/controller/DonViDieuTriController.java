@@ -4,13 +4,14 @@ import com.model.DonViDieuTri;
 import com.model.TinhThanh;
 import com.service.DonViDieuTriService;
 import com.service.TinhThanhService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import javax.validation.Valid;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class DonViDieuTriController {
     }
 
     @GetMapping("/chinh-sua/{maDonVi}")
-    public String showEditForm(@PathVariable String maDonVi, Model model) {
+    public String showEditForm(@PathVariable("maDonVi") String maDonVi, Model model) {
         System.out.println("==> [DonViDieuTriController] GET /chinh-sua/" + maDonVi);
         DonViDieuTri donViDieuTri = donViDieuTriService.getDonViDieuTriById(maDonVi);
         if (donViDieuTri == null) {
@@ -94,7 +95,7 @@ public class DonViDieuTriController {
         return "don-vi-dieu-tri/chinh-sua";
     }
     @PostMapping("/chinh-sua/{maDonVi}")
-    public String updateDonViDieuTri(@PathVariable String maDonVi,
+    public String updateDonViDieuTri(@PathVariable("maDonVi") String maDonVi,
                                     @Valid @ModelAttribute("donViDieuTri") DonViDieuTri donViDieuTri,
                                     BindingResult result,
                                     Model model,
@@ -140,7 +141,7 @@ public class DonViDieuTriController {
     }
 
     @GetMapping("/xoa/{maDonVi}")
-    public String deleteDonViDieuTri(@PathVariable String maDonVi,
+    public String deleteDonViDieuTri(@PathVariable("maDonVi") String maDonVi,
                                     RedirectAttributes redirectAttributes) {
         try {
             donViDieuTriService.deleteDonViDieuTri(maDonVi);
@@ -158,7 +159,7 @@ public class DonViDieuTriController {
      */
     @GetMapping("/api/by-tinh-thanh")
     @ResponseBody
-    public List<DonViDieuTri> getDonViDieuTriByTinhThanh(@RequestParam String maTinhThanh) {
+    public List<DonViDieuTri> getDonViDieuTriByTinhThanh(@RequestParam("maTinhThanh") String maTinhThanh) {
         return donViDieuTriService.getDonViDieuTriByTinhThanh(maTinhThanh);
     }
 } 

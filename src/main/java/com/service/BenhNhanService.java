@@ -48,21 +48,22 @@ public class BenhNhanService {
      * @throws RuntimeException If the associated DonViDieuTri or TinhThanh is not found.
      */
     public BenhNhan createBenhNhan(BenhNhan benhNhan) {
+        // Kiểm tra trùng mã bệnh nhân
+        if (benhNhanRepository.existsById(benhNhan.getMaBenhNhan())) {
+            throw new RuntimeException("Mã bệnh nhân đã tồn tại trong hệ thống");
+        }
         DonViDieuTri donViDieuTri = donViDieuTriRepository.findById(benhNhan.getDonViDieuTri().getMaDonVi())
                 .orElseThrow(() -> new RuntimeException("Mã đơn vị không tồn tại trong hệ thống"));
         TinhThanh tinhThanh = tinhThanhRepository.findById(benhNhan.getTinhThanh().getMaTinhThanh())
                 .orElseThrow(() -> new RuntimeException("Mã tỉnh thành không tồn tại trong hệ thống"));
-        
         // Kiểm tra xem đơn vị điều trị có thuộc về tỉnh thành của bệnh nhân không
         String maTinhCuaDonVi = donViDieuTriRepository.getMaTinhByMaDonVi(donViDieuTri.getMaDonVi());
         if (!maTinhCuaDonVi.equals(tinhThanh.getMaTinhThanh())) {
             throw new RuntimeException("Đơn vị điều trị không thuộc về tỉnh thành mà bệnh nhân đang sinh sống");
         }
-        
         // Gán lại các đối tượng đã tìm thấy
         benhNhan.setDonViDieuTri(donViDieuTri);
         benhNhan.setTinhThanh(tinhThanh);
-        
         return benhNhanRepository.save(benhNhan);
     }
 
@@ -104,9 +105,9 @@ public class BenhNhanService {
      * @return The found patient.
      * @throws RuntimeException If no patient is found with the given ID.
      */
-    public BenhNhan getBenhNhanById(String maBenhNhan) {
+    public Optional<BenhNhan> getBenhNhanById(String maBenhNhan) {
         Optional<BenhNhan> optionalBenhNhan = benhNhanRepository.findById(maBenhNhan);
-        return optionalBenhNhan.orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh nhân với ID: " + maBenhNhan));
+        return optionalBenhNhan;
     }
 
     /**

@@ -1,7 +1,10 @@
 package com.controller;
 
 // Import required classes and annotations
-import com.model.*;
+
+import com.model.BenhNhan;
+import com.model.DonViDieuTri;
+import com.model.TinhThanh;
 import com.service.BenhNhanService;
 import com.service.DonViDieuTriService;
 import com.service.TinhThanhService;
@@ -13,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Controller
@@ -35,7 +39,7 @@ public class BenhNhanController {
     // Display the form to add a new BenhNhan
     @GetMapping("")
     public String showPageBenhNhan(Model model) {
-        model.addAttribute("benhNhan", new BenhNhan()); // Add an empty BenhNhan object to the model
+        model.addAttribute("benhNhan", new BenhNhan());// Add an empty BenhNhan object to the model
         model.addAttribute("tinhThanhList", tinhThanhService.getAllTinhThanh());
         model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
         return "addBenhNhan"; // Return the view for adding BenhNhan
@@ -45,25 +49,16 @@ public class BenhNhanController {
     @PostMapping("/addBenhNhan")
     public String addBenhNhan(@ModelAttribute("benhNhan") BenhNhan benhNhan, RedirectAttributes redirectAttributes) {
         try {
-            // Kiểm tra xem mã bệnh nhân đã tồn tại chưa
-            try {
-                BenhNhan existingBenhNhan = benhNhanService.getBenhNhanById(benhNhan.getMaBenhNhan());
-                if (existingBenhNhan != null) {
-                    redirectAttributes.addFlashAttribute("errorMessage", "Mã bệnh nhân '" + benhNhan.getMaBenhNhan() + "' đã tồn tại!");
-                    return "redirect:/benhnhan";
-                }
-            } catch (Exception e) {
-                // Nếu không tìm thấy bệnh nhân (mã chưa tồn tại) thì tiếp tục thêm mới
-                benhNhanService.createBenhNhan(benhNhan);
-                redirectAttributes.addFlashAttribute("successMessage", "Thêm bệnh nhân thành công!");
-                return "redirect:/benhnhan/list";
+            System.out.println(benhNhan.toString());
+            Optional<BenhNhan> existingBenhNhan = benhNhanService.getBenhNhanById(benhNhan.getMaBenhNhan());
+            if (existingBenhNhan.isPresent()) {
+                redirectAttributes.addFlashAttribute("errorMessage", "Mã bệnh nhân '" + benhNhan.getMaBenhNhan() + "' đã tồn tại!");
+                return "redirect:/benhnhan";
             }
-            
-            // Nếu không có lỗi và không tìm thấy bệnh nhân trùng mã
+            // Gọi service để tạo mới
             benhNhanService.createBenhNhan(benhNhan);
             redirectAttributes.addFlashAttribute("successMessage", "Thêm bệnh nhân thành công!");
             return "redirect:/benhnhan/list";
-            
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi thêm bệnh nhân: " + e.getMessage());
             return "redirect:/benhnhan";
@@ -147,16 +142,14 @@ public class BenhNhanController {
     //show form edit benh nhan
     @GetMapping("/edit/{maBenhNhan}")
     public String showFormEdit(@PathVariable("maBenhNhan") String maBenhNhan, Model model, RedirectAttributes redirectAttributes) {
-        BenhNhan benhNhan = benhNhanService.getBenhNhanById(maBenhNhan);
+        Optional<BenhNhan> benhNhanOpt = benhNhanService.getBenhNhanById(maBenhNhan);
 
-        // In ra console để kiểm tra dữ liệu
-        System.out.println("Bệnh nhân được tìm thấy: " + benhNhan);
-
-        if (benhNhan == null) {
+        if (benhNhanOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bệnh nhân không tồn tại.");
             return "redirect:/benhnhan/list";
         }
 
+        BenhNhan benhNhan = benhNhanOpt.get();
         model.addAttribute("benhNhan", benhNhan);
         model.addAttribute("donViList", donViDieuTriService.getAllDonViDieuTri());
         return "editBenhNhan";
@@ -185,7 +178,7 @@ public class BenhNhanController {
                                  RedirectAttributes redirectAttributes) {
         try {
             // Kiểm tra bệnh nhân có tồn tại không
-            BenhNhan benhNhan = benhNhanService.getBenhNhanById(maBenhNhan);
+            Optional<BenhNhan> benhNhan = benhNhanService.getBenhNhanById(maBenhNhan);
             if (benhNhan == null) {
                 redirectAttributes.addFlashAttribute("errorMessage", "Không tìm thấy bệnh nhân với mã: " + maBenhNhan);
                 return "redirect:/benhnhan/list";
@@ -199,4 +192,5 @@ public class BenhNhanController {
         }
         return "redirect:/benhnhan/list";
     }
+
 }

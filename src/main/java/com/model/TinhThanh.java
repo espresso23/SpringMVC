@@ -1,7 +1,6 @@
 package com.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class TinhThanh {
@@ -10,6 +9,8 @@ public class TinhThanh {
 
     private String tenTinhThanh;
 
+    public TinhThanh() {
+    }
 
     public String getMaTinhThanh() {
         return maTinhThanh;
